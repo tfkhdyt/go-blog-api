@@ -1,0 +1,48 @@
+all: start
+
+build:
+	go build -o ./bin/blog-api ./cmd/blog-api/main.go
+
+install:
+	go install ./cmd/blog-api/main.go
+
+start: db-start build
+	./bin/blog-api $(ARGS)
+
+dev: db-start
+	go run ./cmd/blog-api/main.go $(ARGS)
+
+# dependency:
+# - watchexec = https://github.com/watchexec/watchexec
+dev-watch: db-start
+	watchexec -c -r -e go -- go run ./cmd/blog-api/main.go $(ARGS)
+
+test:
+	go test -v ./...
+
+test-cover:
+	go test -v -cover ./...
+
+test-cover-watch:
+	watchexec -c -r -e go -- go test -v -cover ./...
+
+test-cover-html:
+	go test -coverprofile cover.out ./... && \
+		go tool cover -html=cover.out
+
+generate:
+	go generate ./...
+
+clean:
+	rm -f ./bin/* ./cover.out
+
+db-start:
+	sudo systemctl start postgresql
+
+db-stop:
+	sudo systemctl stop postgresql
+
+db-status:
+	sudo systemctl status postgresql
+
+.PHONY: build install start dev dev-watch test test-cover test-cover-watch test-cover-html generate clean db-start db-stop db-status
