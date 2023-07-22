@@ -7,17 +7,14 @@ import (
 	"log"
 	"strings"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	_ "github.com/joho/godotenv/autoload"
 
+	"codeberg.org/tfkhdyt/blog-api/internal/database/postgres"
+	"codeberg.org/tfkhdyt/blog-api/internal/user"
 	"codeberg.org/tfkhdyt/blog-api/pkg/validator"
 )
-
-func init() {
-	govalidator.SetFieldsRequiredByDefault(true)
-}
 
 func main() {
 	app := fiber.New(fiber.Config{
@@ -45,6 +42,16 @@ func main() {
 	app.Use(recover.New())
 	port := flag.Uint("port", 8080, "server port")
 	flag.Parse()
+
+	userRepo := user.NewUserRepoPostgres(postgres.DB)
+	userService := user.NewUserService(userRepo)
+	userHandler := user.NewUserHandler(userService)
+
+	app.Post("/users", userHandler.Register)
+	app.Get("/users", userHandler.FindAllUsers)
+	app.Get("/users/:userId", userHandler.FindOneUser)
+	app.Put("/users/:userId", userHandler.UpdateCake)
+	app.Delete("/users/:userId", userHandler.DeleteCake)
 
 	log.Fatalln(
 		app.Listen(
