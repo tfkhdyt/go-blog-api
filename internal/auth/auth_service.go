@@ -16,6 +16,33 @@ func NewAuthService(authRepo auth.AuthRepository, userRepo user.UserRepository) 
 	return &authService{authRepo, userRepo}
 }
 
+func (a *authService) Register(payload *auth.RegisterRequest) (*auth.RegisterResponse, error) {
+	newUser, err := payload.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := newUser.HashPassword(); err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	registeredUser, errRegister := a.userRepo.Register(newUser)
+	if errRegister != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, errRegister.Error())
+	}
+
+	response := auth.RegisterResponse{
+		ID:        registeredUser.ID,
+		FullName:  registeredUser.FullName,
+		Username:  registeredUser.Username,
+		Email:     registeredUser.Email,
+		Role:      registeredUser.Role,
+		CreatedAt: registeredUser.CreatedAt,
+	}
+
+	return &response, nil
+}
+
 func (a *authService) Login(payload *auth.LoginRequest) (*auth.LoginResponse, error) {
 	if err := payload.Validate(); err != nil {
 		return nil, err

@@ -52,12 +52,12 @@ func main() {
 	authService := auth.NewAuthService(authRepo, userRepo)
 	authHandler := auth.NewAuthHandler(authService)
 
-	app.Post("/users", userHandler.Register)
 	app.Get("/users", userHandler.FindAllUsers)
 	app.Get("/users/:userId", userHandler.FindOneUser)
 	app.Put("/users/:userId", userHandler.UpdateCake)
 	app.Delete("/users/:userId", userHandler.DeleteCake)
 
+	app.Post("/auth/register", authHandler.Register)
 	app.Post("/auth/login", authHandler.Login)
 	app.Put("/auth/refresh", auth.JwtMiddleware, authHandler.Refresh)
 	app.Delete("/auth/logout", auth.JwtMiddleware, authHandler.Logout)

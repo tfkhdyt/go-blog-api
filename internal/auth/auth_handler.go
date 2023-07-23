@@ -17,6 +17,22 @@ func NewAuthHandler(authService auth.AuthService) *authHandler {
 	return &authHandler{authService}
 }
 
+func (a *authHandler) Register(c *fiber.Ctx) error {
+	payload := new(auth.RegisterRequest)
+	if err := c.BodyParser(payload); err != nil {
+		return fiber.NewError(fiber.StatusUnprocessableEntity, "failed to parse body")
+	}
+
+	registeredUser, err := a.authService.Register(payload)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"data": registeredUser,
+	})
+}
+
 func (a *authHandler) Login(c *fiber.Ctx) error {
 	auth_ := new(auth.LoginRequest)
 	if err := c.BodyParser(auth_); err != nil {

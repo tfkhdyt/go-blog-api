@@ -16,33 +16,6 @@ func NewUserService(userRepo user.UserRepository) *userService {
 	return &userService{userRepo}
 }
 
-func (u *userService) Register(payload *user.RegisterRequest) (*user.RegisterResponse, error) {
-	newUser, err := payload.Validate()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := newUser.HashPassword(); err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
-	}
-
-	registeredUser, errRegister := u.userRepo.Register(newUser)
-	if errRegister != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, errRegister.Error())
-	}
-
-	response := user.RegisterResponse{
-		ID:        registeredUser.ID,
-		FullName:  registeredUser.FullName,
-		Username:  registeredUser.Username,
-		Email:     registeredUser.Email,
-		Role:      registeredUser.Role,
-		CreatedAt: registeredUser.CreatedAt,
-	}
-
-	return &response, nil
-}
-
 func (u *userService) FindAllUsers() (*user.FindAllUsersResponse, error) {
 	users, err := u.userRepo.FindAllUsers()
 	if err != nil {

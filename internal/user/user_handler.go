@@ -14,22 +14,6 @@ func NewUserHandler(userService user.UserService) *userHandler {
 	return &userHandler{userService}
 }
 
-func (u *userHandler) Register(c *fiber.Ctx) error {
-	payload := new(user.RegisterRequest)
-	if err := c.BodyParser(payload); err != nil {
-		return fiber.NewError(fiber.StatusUnprocessableEntity, "failed to parse body")
-	}
-
-	registeredUser, err := u.userService.Register(payload)
-	if err != nil {
-		return err
-	}
-
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"data": registeredUser,
-	})
-}
-
 func (u *userHandler) FindAllUsers(c *fiber.Ctx) error {
 	users, err := u.userService.FindAllUsers()
 	if err != nil {
