@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	postgresConfig "codeberg.org/tfkhdyt/blog-api/internal/config/postgres"
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/auth"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/user"
 )
 
@@ -21,7 +22,7 @@ func init() {
 		log.Fatalln("Error:", err.Error())
 	}
 
-	if err := DB.AutoMigrate(&user.User{}); err != nil {
+	if err := DB.AutoMigrate(&user.User{}, &auth.Auth{}); err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
 
