@@ -26,7 +26,7 @@ func (u *userRepoPostgres) Register(newUser *user.User) (*user.User, error) {
 
 func (u *userRepoPostgres) FindAllUsers() (*[]user.User, error) {
 	users := new([]user.User)
-	if err := u.db.Find(users).Error; err != nil {
+	if err := u.db.Order("id").Find(users).Error; err != nil {
 		return nil, fmt.Errorf("failed to find all users")
 	}
 
@@ -36,7 +36,7 @@ func (u *userRepoPostgres) FindAllUsers() (*[]user.User, error) {
 func (u *userRepoPostgres) FindOneUser(userId uint) (*user.User, error) {
 	user := new(user.User)
 	if err := u.db.First(user, userId).Error; err != nil {
-		return nil, fmt.Errorf("failed to find user with id %d", userId)
+		return nil, fmt.Errorf("user with id %d is not found", userId)
 	}
 
 	return user, nil
@@ -45,7 +45,7 @@ func (u *userRepoPostgres) FindOneUser(userId uint) (*user.User, error) {
 func (u *userRepoPostgres) FindOneUserByEmail(email string) (*user.User, error) {
 	user := new(user.User)
 	if err := u.db.First(user, "email = ?", email).Error; err != nil {
-		return nil, fmt.Errorf("failed to find user with email %s", email)
+		return nil, fmt.Errorf("user with email %s is not found", email)
 	}
 
 	return user, nil
