@@ -42,6 +42,15 @@ func (u *userRepoPostgres) FindOneUser(userId uint) (*user.User, error) {
 	return user, nil
 }
 
+func (u *userRepoPostgres) FindOneUserByEmail(email string) (*user.User, error) {
+	user := new(user.User)
+	if err := u.db.First(user, "email = ?", email).Error; err != nil {
+		return nil, fmt.Errorf("failed to find user with email %s", email)
+	}
+
+	return user, nil
+}
+
 func (u *userRepoPostgres) UpdateUser(oldUser *user.User, newUser *user.User) (*user.User, error) {
 	if err := u.db.Model(oldUser).Updates(newUser).Error; err != nil {
 		return nil, fmt.Errorf("failed to update user with id %d", oldUser.ID)
