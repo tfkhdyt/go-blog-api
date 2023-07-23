@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/auth"
+	authHelper "codeberg.org/tfkhdyt/blog-api/pkg/auth"
 )
 
 type authHandler struct {
@@ -66,9 +66,7 @@ func (a *authHandler) Login(c *fiber.Ctx) error {
 }
 
 func (a *authHandler) Refresh(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["userId"].(float64)
+	userId := authHelper.GetUserIDFromClaims(c)
 
 	ath := new(auth.RefreshRequest)
 	if err := c.BodyParser(ath); err != nil {
