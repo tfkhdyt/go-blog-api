@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/auth"
+	authHelper "codeberg.org/tfkhdyt/blog-api/pkg/auth"
 )
 
 type authHandler struct {
@@ -15,6 +15,22 @@ type authHandler struct {
 
 func NewAuthHandler(authService auth.AuthService) *authHandler {
 	return &authHandler{authService}
+}
+
+func (a *authHandler) Register(c *fiber.Ctx) error {
+	payload := new(auth.RegisterRequest)
+	if err := c.BodyParser(payload); err != nil {
+		return fiber.NewError(fiber.StatusUnprocessableEntity, "failed to parse body")
+	}
+
+	registeredUser, err := a.authService.Register(payload)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"data": registeredUser,
+	})
 }
 
 func (a *authHandler) Login(c *fiber.Ctx) error {
@@ -50,9 +66,7 @@ func (a *authHandler) Login(c *fiber.Ctx) error {
 }
 
 func (a *authHandler) Refresh(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["userId"].(float64)
+	userId := authHelper.GetUserIDFromClaims(c)
 
 	ath := new(auth.RefreshRequest)
 	if err := c.BodyParser(ath); err != nil {
