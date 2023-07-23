@@ -27,7 +27,6 @@ type UpdateUserRequest struct {
 	FullName string `json:"full_name" valid:"stringlength(3|50)~full name length should be between 3 - 50 chars"`
 	Username string `json:"username"  valid:"stringlength(3|16)~username length should be between 3 - 16 chars"`
 	Email    string `json:"email"     valid:"email~invalid email"`
-	Password string `json:"password"  valid:"stringlength(8|128)~password length should be between 8 - 128 chars"`
 }
 
 func (r *UpdateUserRequest) Validate() (*User, error) {
@@ -39,7 +38,6 @@ func (r *UpdateUserRequest) Validate() (*User, error) {
 		FullName: r.FullName,
 		Username: r.Username,
 		Email:    r.Email,
-		Password: r.Password,
 	}, nil
 }
 
