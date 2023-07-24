@@ -1,21 +1,21 @@
 all: start
 
 build:
-	go build -o ./bin/blog-api ./cmd/blog-api/main.go
+	go build -o ./bin/blog-api ./cmd/blog-api
 
 install:
-	go install ./cmd/blog-api/main.go
+	go install ./cmd/blog-api
 
 start: db-start build
 	./bin/blog-api $(ARGS)
 
 dev: db-start
-	go run ./cmd/blog-api/main.go $(ARGS)
+	go run ./cmd/blog-api $(ARGS)
 
 # dependency:
 # - watchexec = https://github.com/watchexec/watchexec
 dev-watch: db-start
-	watchexec -c -r -e go -- go run ./cmd/blog-api/main.go $(ARGS)
+	watchexec -c -r -e go -- go run ./cmd/blog-api $(ARGS)
 
 test:
 	go test -v ./...
