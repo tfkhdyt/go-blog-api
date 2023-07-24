@@ -44,11 +44,11 @@ func startFiber() {
 	port := flag.Uint("port", 8080, "server port")
 	flag.Parse()
 
-	userRepo, _, userHandler := user.InjectUser(postgres.DB)
-	_, _, authHandler := auth.InjectAuth(postgres.DB, userRepo)
+	userInjector := user.InjectUser(postgres.DB)
+	authInjector := auth.InjectAuth(postgres.DB, userInjector.UserRepo)
 
-	user.RouteUser(app, userHandler)
-	auth.RouteAuth(app, authHandler)
+	user.RouteUser(app, userInjector.UserHandler)
+	auth.RouteAuth(app, authInjector.AuthHandler)
 
 	log.Fatalln(app.Listen(fmt.Sprintf(":%d", *port)))
 }

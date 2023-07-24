@@ -2,12 +2,19 @@ package user
 
 import (
 	"gorm.io/gorm"
+
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/user"
 )
 
-func InjectUser(db *gorm.DB) (*userRepoPostgres, *userService, *userHandler) {
+type UserInjector struct {
+	UserRepo    user.UserRepository
+	UserHandler user.UserHandler
+}
+
+func InjectUser(db *gorm.DB) *UserInjector {
 	userRepo := NewUserRepoPostgres(db)
 	userService := NewUserService(userRepo)
 	userHandler := NewUserHandler(userService)
 
-	return userRepo, userService, userHandler
+	return &UserInjector{userRepo, userHandler}
 }

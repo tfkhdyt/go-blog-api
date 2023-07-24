@@ -3,16 +3,19 @@ package auth
 import (
 	"gorm.io/gorm"
 
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/auth"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/user"
 )
 
-func InjectAuth(
-	db *gorm.DB,
-	userRepo user.UserRepository,
-) (*authRepoPostgres, *authService, *authHandler) {
+type AuthInjector struct {
+	AuthRepo    auth.AuthRepository
+	AuthHandler auth.AuthHandler
+}
+
+func InjectAuth(db *gorm.DB, userRepo user.UserRepository) *AuthInjector {
 	authRepo := NewAuthRepoPostgres(db)
 	authService := NewAuthService(authRepo, userRepo)
 	authHandler := NewAuthHandler(authService)
 
-	return authRepo, authService, authHandler
+	return &AuthInjector{authRepo, authHandler}
 }
