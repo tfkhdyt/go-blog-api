@@ -25,23 +25,23 @@ import (
 
 func init() {
 	di.RegisterBean("userRoute", reflect.TypeOf((*route.UserRoute)(nil)))
-	_, _ = di.RegisterBean("authRoute", reflect.TypeOf((*route.AuthRoute)(nil)))
+	di.RegisterBean("authRoute", reflect.TypeOf((*route.AuthRoute)(nil)))
 
-	_, _ = di.RegisterBean("userController", reflect.TypeOf((*controller.UserController)(nil)))
-	_, _ = di.RegisterBean("authController", reflect.TypeOf((*controller.AuthController)(nil)))
+	di.RegisterBean("userController", reflect.TypeOf((*controller.UserController)(nil)))
+	di.RegisterBean("authController", reflect.TypeOf((*controller.AuthController)(nil)))
 
-	_, _ = di.RegisterBean("userUsecase", reflect.TypeOf((*usecase.UserUsecase)(nil)))
-	_, _ = di.RegisterBean("authUsecase", reflect.TypeOf((*usecase.AuthUsecase)(nil)))
+	di.RegisterBean("userUsecase", reflect.TypeOf((*usecase.UserUsecase)(nil)))
+	di.RegisterBean("authUsecase", reflect.TypeOf((*usecase.AuthUsecase)(nil)))
 
-	_, _ = di.RegisterBean("userRepo", reflect.TypeOf((*postgres.UserRepositoryPostgres)(nil)))
-	_, _ = di.RegisterBean("authRepo", reflect.TypeOf((*postgres.AuthRepositoryPostgres)(nil)))
+	di.RegisterBean("userRepo", reflect.TypeOf((*postgres.UserRepositoryPostgres)(nil)))
+	di.RegisterBean("authRepo", reflect.TypeOf((*postgres.AuthRepositoryPostgres)(nil)))
 
-	_, _ = di.RegisterBean("passwordHashService", reflect.TypeOf((*security.BcryptService)(nil)))
-	_, _ = di.RegisterBean("authTokenService", reflect.TypeOf((*security.JwtService)(nil)))
+	di.RegisterBean("passwordHashService", reflect.TypeOf((*security.BcryptService)(nil)))
+	di.RegisterBean("authTokenService", reflect.TypeOf((*security.JwtService)(nil)))
 
-	_, _ = di.RegisterBeanInstance("database", database.DB)
+	di.RegisterBeanInstance("database", database.DB)
 
-	_ = di.InitializeContainer()
+	di.InitializeContainer()
 }
 
 func StartFiber() {
