@@ -5,6 +5,7 @@ import (
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/repository"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/security"
+	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
 type AuthUsecase struct {
@@ -108,6 +109,41 @@ func (a *AuthUsecase) Logout(refreshToken string) (*dto.LogoutResponse, error) {
 
 	response := dto.LogoutResponse{
 		Message: "you've logged out successfully",
+	}
+
+	return &response, nil
+}
+
+func (a *AuthUsecase) ChangePassword(
+	userId uint,
+	payload *dto.ChangePasswordRequest,
+) (*dto.ChangePasswordResponse, error) {
+	user, err := a.userRepo.FindOneUser(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := a.passwordHashService.ComparePassword(user.Password, payload.OldPassword); err != nil {
+		return nil, err
+	}
+
+	if payload.NewPassword != payload.ConfirmPassword {
+		return nil, exception.NewHTTPError(400, "new and confirm password is not the same")
+	}
+
+	hashedPassword, errHash := a.passwordHashService.HashPassword(payload.NewPassword)
+	if errHash != nil {
+		return nil, errHash
+	}
+
+	if _, err := a.userRepo.UpdateUser(user, &entity.User{
+		Password: hashedPassword,
+	}); err != nil {
+		return nil, err
+	}
+
+	response := dto.ChangePasswordResponse{
+		Message: "your password has been changed",
 	}
 
 	return &response, nil

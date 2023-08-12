@@ -12,20 +12,6 @@ type RegisterRequest struct {
 	Password string `json:"password"  valid:"required~password is required,stringlength(8|128)~password length should be between 8 - 128 chars"`
 }
 
-// func (r *RegisterRequest) Validate() (*user.User, error) {
-// 	if _, err := govalidator.ValidateStruct(r); err != nil {
-// 		return nil, validator.NewValidationError(err)
-// 	}
-//
-// 	return &user.User{
-// 		FullName: r.FullName,
-// 		Username: r.Username,
-// 		Email:    r.Email,
-// 		Password: r.Password,
-// 		Role:     "user",
-// 	}, nil
-// }
-
 type RegisterResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 	FullName  string    `json:"full_name"`
@@ -46,26 +32,10 @@ type LoginResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-// func (l *LoginRequest) Validate() error {
-// 	if _, err := govalidator.ValidateStruct(l); err != nil {
-// 		return validator.NewValidationError(err)
-// 	}
-//
-// 	return nil
-// }
-
 // Refresh
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token" valid:"required~refresh token is required"`
 }
-
-// func (r *RefreshRequest) Validate() error {
-// 	if _, err := govalidator.ValidateStruct(r); err != nil {
-// 		return validator.NewValidationError(err)
-// 	}
-//
-// 	return nil
-// }
 
 type RefreshResponse struct {
 	AccessToken string `json:"access_token"`
@@ -76,14 +46,15 @@ type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token" valid:"required~refresh token is required"`
 }
 
-// func (l *LogoutRequest) Validate() error {
-// 	if _, err := govalidator.ValidateStruct(l); err != nil {
-// 		return validator.NewValidationError(err)
-// 	}
-//
-// 	return nil
-// }
-
 type LogoutResponse struct {
 	Message string `json:"message"`
 }
+
+// Change password
+type ChangePasswordRequest struct {
+	OldPassword     string `json:"old_password"     valid:"required~old password is required,stringlength(8|128)~old password length should be between 8 - 128 chars"`
+	NewPassword     string `json:"new_password"     valid:"required~new password is required,stringlength(8|128)~new password length should be between 8 - 128 chars"`
+	ConfirmPassword string `json:"confirm_password" valid:"required~confim password is required,stringlength(8|128)~confirm password length should be between 8 - 128 chars"`
+}
+
+type ChangePasswordResponse LogoutResponse

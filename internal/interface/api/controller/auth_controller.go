@@ -146,3 +146,23 @@ func (a *AuthController) Logout(c *fiber.Ctx) error {
 
 	return c.JSON(response)
 }
+
+func (a *AuthController) ChangePassword(c *fiber.Ctx) error {
+	userId := authHelper.GetUserIDFromClaims(c)
+
+	payload := new(dto.ChangePasswordRequest)
+	if err := c.BodyParser(payload); err != nil {
+		return exception.NewHTTPError(422, "failed to parse body")
+	}
+
+	if _, err := govalidator.ValidateStruct(payload); err != nil {
+		return validator.NewValidationError(err)
+	}
+
+	response, errChangePassword := a.authUsecase.ChangePassword(userId, payload)
+	if errChangePassword != nil {
+		return errChangePassword
+	}
+
+	return c.JSON(response)
+}
