@@ -1,17 +1,12 @@
 package security
 
 import (
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 
+	"codeberg.org/tfkhdyt/blog-api/internal/interface/config"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
-)
-
-var (
-	jwtAccessTokenKey  = os.Getenv("JWT_ACCESS_TOKEN_KEY")
-	jwtRefreshTokenKey = os.Getenv("JWT_REFRESH_TOKEN_KEY")
 )
 
 type AuthTokenService interface {
@@ -32,7 +27,7 @@ func (j *JwtService) CreateAccessToken(id uint, role string) (string, error) {
 		return "", exception.NewHTTPError(500, "failed to to create new access token")
 	}
 
-	signedString, err := token.SignedString([]byte(jwtAccessTokenKey))
+	signedString, err := token.SignedString([]byte(config.JwtAccessTokenKey))
 	if err != nil {
 		return "", exception.NewHTTPError(500, "failed to sign access token")
 	}
@@ -51,7 +46,7 @@ func (j *JwtService) CreateRefreshToken(id uint, role string) (string, error) {
 		return "", exception.NewHTTPError(500, "failed to to create new refresh token")
 	}
 
-	signedString, err := token.SignedString([]byte(jwtRefreshTokenKey))
+	signedString, err := token.SignedString([]byte(config.JwtRefreshTokenKey))
 	if err != nil {
 		return "", exception.NewHTTPError(500, "failed to sign refresh token")
 	}
