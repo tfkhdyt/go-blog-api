@@ -1,12 +1,7 @@
-package auth
+package dto
 
 import (
 	"time"
-
-	"github.com/asaskevich/govalidator"
-
-	"codeberg.org/tfkhdyt/blog-api/internal/domain/user"
-	"codeberg.org/tfkhdyt/blog-api/pkg/validator"
 )
 
 // Register
@@ -17,19 +12,19 @@ type RegisterRequest struct {
 	Password string `json:"password"  valid:"required~password is required,stringlength(8|128)~password length should be between 8 - 128 chars"`
 }
 
-func (r *RegisterRequest) Validate() (*user.User, error) {
-	if _, err := govalidator.ValidateStruct(r); err != nil {
-		return nil, validator.NewValidationError(err)
-	}
-
-	return &user.User{
-		FullName: r.FullName,
-		Username: r.Username,
-		Email:    r.Email,
-		Password: r.Password,
-		Role:     "user",
-	}, nil
-}
+// func (r *RegisterRequest) Validate() (*user.User, error) {
+// 	if _, err := govalidator.ValidateStruct(r); err != nil {
+// 		return nil, validator.NewValidationError(err)
+// 	}
+//
+// 	return &user.User{
+// 		FullName: r.FullName,
+// 		Username: r.Username,
+// 		Email:    r.Email,
+// 		Password: r.Password,
+// 		Role:     "user",
+// 	}, nil
+// }
 
 type RegisterResponse struct {
 	CreatedAt time.Time `json:"created_at"`
@@ -51,26 +46,26 @@ type LoginResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func (l *LoginRequest) Validate() error {
-	if _, err := govalidator.ValidateStruct(l); err != nil {
-		return validator.NewValidationError(err)
-	}
-
-	return nil
-}
+// func (l *LoginRequest) Validate() error {
+// 	if _, err := govalidator.ValidateStruct(l); err != nil {
+// 		return validator.NewValidationError(err)
+// 	}
+//
+// 	return nil
+// }
 
 // Refresh
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token" valid:"required~refresh token is required"`
 }
 
-func (r *RefreshRequest) Validate() error {
-	if _, err := govalidator.ValidateStruct(r); err != nil {
-		return validator.NewValidationError(err)
-	}
-
-	return nil
-}
+// func (r *RefreshRequest) Validate() error {
+// 	if _, err := govalidator.ValidateStruct(r); err != nil {
+// 		return validator.NewValidationError(err)
+// 	}
+//
+// 	return nil
+// }
 
 type RefreshResponse struct {
 	AccessToken string `json:"access_token"`
@@ -81,13 +76,13 @@ type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token" valid:"required~refresh token is required"`
 }
 
-func (l *LogoutRequest) Validate() error {
-	if _, err := govalidator.ValidateStruct(l); err != nil {
-		return validator.NewValidationError(err)
-	}
-
-	return nil
-}
+// func (l *LogoutRequest) Validate() error {
+// 	if _, err := govalidator.ValidateStruct(l); err != nil {
+// 		return validator.NewValidationError(err)
+// 	}
+//
+// 	return nil
+// }
 
 type LogoutResponse struct {
 	Message string `json:"message"`

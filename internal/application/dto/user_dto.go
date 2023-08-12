@@ -1,11 +1,7 @@
-package user
+package dto
 
 import (
 	"time"
-
-	"github.com/asaskevich/govalidator"
-
-	"codeberg.org/tfkhdyt/blog-api/pkg/validator"
 )
 
 // Find all
@@ -29,17 +25,17 @@ type UpdateUserRequest struct {
 	Email    string `json:"email"     valid:"email~invalid email"`
 }
 
-func (r *UpdateUserRequest) Validate() (*User, error) {
-	if _, err := govalidator.ValidateStruct(r); err != nil {
-		return nil, validator.NewValidationError(err)
-	}
-
-	return &User{
-		FullName: r.FullName,
-		Username: r.Username,
-		Email:    r.Email,
-	}, nil
-}
+// func (r *UpdateUserRequest) Validate() (*User, error) {
+// 	if _, err := govalidator.ValidateStruct(r); err != nil {
+// 		return nil, validator.NewValidationError(err)
+// 	}
+//
+// 	return &User{
+// 		FullName: r.FullName,
+// 		Username: r.Username,
+// 		Email:    r.Email,
+// 	}, nil
+// }
 
 type UpdateUserResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`

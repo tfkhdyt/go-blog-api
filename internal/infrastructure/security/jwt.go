@@ -15,8 +15,8 @@ var (
 )
 
 type AuthTokenService interface {
-	CreateAccessToken() (string, error)
-	CreateRefreshToken() (string, error)
+	CreateAccessToken(id uint, role string) (string, error)
+	CreateRefreshToken(id uint, role string) (string, error)
 }
 
 type JwtService struct{}
