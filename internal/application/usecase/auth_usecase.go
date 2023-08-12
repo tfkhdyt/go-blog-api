@@ -8,14 +8,14 @@ import (
 )
 
 type AuthUsecase struct {
-	authRepo      repository.AuthRepository    `di.inject:"authRepo"`
-	userRepo      repository.UserRepository    `di.inject:"userRepo"`
-	bcryptService security.PasswordHashService `di.inject:"passwordHashService"`
-	jwtService    security.AuthTokenService    `di.inject:"authTokenService"`
+	authRepo            repository.AuthRepository    `di.inject:"authRepo"`
+	userRepo            repository.UserRepository    `di.inject:"userRepo"`
+	passwordHashService security.PasswordHashService `di.inject:"passwordHashService"`
+	authTokenService    security.AuthTokenService    `di.inject:"authTokenService"`
 }
 
 func (a *AuthUsecase) Register(payload *dto.RegisterRequest) (*dto.RegisterResponse, error) {
-	hashedPassword, err := a.bcryptService.HashPassword(payload.Password)
+	hashedPassword, err := a.passwordHashService.HashPassword(payload.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -48,16 +48,16 @@ func (a *AuthUsecase) Login(payload *dto.LoginRequest) (*dto.LoginResponse, erro
 		return nil, err
 	}
 
-	if err := a.bcryptService.ComparePassword(user.Password, payload.Password); err != nil {
+	if err := a.passwordHashService.ComparePassword(user.Password, payload.Password); err != nil {
 		return nil, err
 	}
 
-	accessToken, errAccessToken := a.jwtService.CreateAccessToken(user.ID, user.Role)
+	accessToken, errAccessToken := a.authTokenService.CreateAccessToken(user.ID, user.Role)
 	if errAccessToken != nil {
 		return nil, errAccessToken
 	}
 
-	refreshToken, errRefreshToken := a.jwtService.CreateRefreshToken(user.ID, user.Role)
+	refreshToken, errRefreshToken := a.authTokenService.CreateRefreshToken(user.ID, user.Role)
 	if errRefreshToken != nil {
 		return nil, errRefreshToken
 	}
@@ -89,7 +89,7 @@ func (a *AuthUsecase) Refresh(
 		return nil, err
 	}
 
-	accessToken, errAccessToken := a.jwtService.CreateAccessToken(user.ID, user.Role)
+	accessToken, errAccessToken := a.authTokenService.CreateAccessToken(user.ID, user.Role)
 	if errAccessToken != nil {
 		return nil, errAccessToken
 	}
