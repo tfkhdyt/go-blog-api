@@ -14,14 +14,14 @@ import (
 )
 
 var (
-	DB         *gorm.DB
-	err        error
-	dbUsername = os.Getenv("DB_USERNAME")
-	dbPassword = os.Getenv("DB_PASSWORD")
-	dbHost     = os.Getenv("DB_HOST")
-	dbPort     = os.Getenv("DB_PORT")
-	dbName     = os.Getenv("DB_NAME")
-	dsn        = fmt.Sprintf(
+	PostgresInstance *gorm.DB
+	err              error
+	dbUsername       = os.Getenv("DB_USERNAME")
+	dbPassword       = os.Getenv("DB_PASSWORD")
+	dbHost           = os.Getenv("DB_HOST")
+	dbPort           = os.Getenv("DB_PORT")
+	dbName           = os.Getenv("DB_NAME")
+	dsn              = fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		dbHost, dbUsername, dbPassword, dbName, dbPort,
 	)
@@ -45,7 +45,7 @@ func seedAdmin() {
 
 	admin.Password = hashedPassword
 
-	if err := DB.Create(admin).Error; err != nil {
+	if err := PostgresInstance.Create(admin).Error; err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
 
@@ -53,17 +53,17 @@ func seedAdmin() {
 }
 
 func init() {
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	PostgresInstance, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
 
-	if err := DB.AutoMigrate(&entity.User{}, &entity.Auth{}); err != nil {
+	if err := PostgresInstance.AutoMigrate(&entity.User{}, &entity.Auth{}); err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
 
-	if DB.Migrator().HasTable(&entity.User{}) {
-		if err := DB.First(&entity.User{}, "role = ?", "admin").Error; errors.Is(
+	if PostgresInstance.Migrator().HasTable(&entity.User{}) {
+		if err := PostgresInstance.First(&entity.User{}, "role = ?", "admin").Error; errors.Is(
 			err,
 			gorm.ErrRecordNotFound,
 		) {

@@ -39,7 +39,7 @@ func init() {
 	di.RegisterBean("passwordHashService", reflect.TypeOf((*security.BcryptService)(nil)))
 	di.RegisterBean("authTokenService", reflect.TypeOf((*security.JwtService)(nil)))
 
-	di.RegisterBeanInstance("database", database.DB)
+	di.RegisterBeanInstance("database", database.PostgresInstance)
 
 	di.InitializeContainer()
 }
