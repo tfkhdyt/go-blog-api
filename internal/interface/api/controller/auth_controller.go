@@ -5,6 +5,7 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/gofiber/fiber/v2"
+	_ "github.com/goioc/di"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"
@@ -14,7 +15,7 @@ import (
 )
 
 type AuthController struct {
-	authUsecase usecase.AuthUsecase
+	authUsecase *usecase.AuthUsecase `di.inject:"authUsecase"`
 }
 
 func (a *AuthController) Register(c *fiber.Ctx) error {

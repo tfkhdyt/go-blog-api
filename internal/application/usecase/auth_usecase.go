@@ -8,10 +8,10 @@ import (
 )
 
 type AuthUsecase struct {
-	authRepo      repository.AuthRepository
-	userRepo      repository.UserRepository
-	bcryptService security.PasswordHashService
-	jwtService    security.AuthTokenService
+	authRepo      repository.AuthRepository    `di.inject:"authRepo"`
+	userRepo      repository.UserRepository    `di.inject:"userRepo"`
+	bcryptService security.PasswordHashService `di.inject:"passwordHashService"`
+	jwtService    security.AuthTokenService    `di.inject:"authTokenService"`
 }
 
 func (a *AuthUsecase) Register(payload *dto.RegisterRequest) (*dto.RegisterResponse, error) {
@@ -107,7 +107,7 @@ func (a *AuthUsecase) Logout(refreshToken string) (*dto.LogoutResponse, error) {
 	}
 
 	response := dto.LogoutResponse{
-		Message: "refresh token has been deleted",
+		Message: "you've logged out successfully",
 	}
 
 	return &response, nil

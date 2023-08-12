@@ -2,13 +2,14 @@ package route
 
 import (
 	"github.com/gofiber/fiber/v2"
+	_ "github.com/goioc/di"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/controller"
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/middleware"
 )
 
 type AuthRoute struct {
-	authController controller.AuthController
+	authController *controller.AuthController `di.inject:"authController"`
 }
 
 func (a *AuthRoute) RegisterRoute(router fiber.Router) {

@@ -1,14 +1,18 @@
 package exception
 
-type httpError struct {
+type HttpError struct {
 	message    string
 	statusCode uint
 }
 
-func (h *httpError) Error() string {
+func (h *HttpError) Error() string {
 	return h.message
 }
 
-func NewHTTPError(statusCode uint, message string) *httpError {
-	return &httpError{message, statusCode}
+func (h *HttpError) StatusCode() uint {
+	return h.statusCode
+}
+
+func NewHTTPError(statusCode uint, message string) *HttpError {
+	return &HttpError{message, statusCode}
 }

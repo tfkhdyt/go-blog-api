@@ -3,13 +3,15 @@ package usecase
 import (
 	"fmt"
 
+	_ "github.com/goioc/di"
+
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/repository"
 )
 
 type UserUsecase struct {
-	userRepo repository.UserRepository
+	userRepo repository.UserRepository `di.inject:"userRepo"`
 }
 
 func (u *UserUsecase) FindAllUsers() (*dto.FindAllUsersResponse, error) {
