@@ -3,7 +3,6 @@ package postgres
 import (
 	"fmt"
 
-	_ "github.com/goioc/di"
 	"gorm.io/gorm"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"

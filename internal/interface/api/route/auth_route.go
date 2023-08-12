@@ -2,7 +2,6 @@ package route
 
 import (
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/goioc/di"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/controller"
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/middleware"

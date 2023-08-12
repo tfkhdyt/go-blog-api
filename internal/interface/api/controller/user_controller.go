@@ -3,7 +3,6 @@ package controller
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/goioc/di"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"

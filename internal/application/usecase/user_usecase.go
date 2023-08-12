@@ -3,8 +3,6 @@ package usecase
 import (
 	"fmt"
 
-	_ "github.com/goioc/di"
-
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/repository"
