@@ -9,11 +9,6 @@ import (
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
-type AuthTokenService interface {
-	CreateAccessToken(id uint, role string) (string, error)
-	CreateRefreshToken(id uint, role string) (string, error)
-}
-
 type JwtService struct{}
 
 func (j *JwtService) CreateAccessToken(id uint, role string) (string, error) {

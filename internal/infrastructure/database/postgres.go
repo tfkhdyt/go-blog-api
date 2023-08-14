@@ -58,7 +58,7 @@ func init() {
 		log.Fatalln("Error:", err.Error())
 	}
 
-	if err := PostgresInstance.AutoMigrate(&entity.User{}, &entity.Auth{}); err != nil {
+	if err := PostgresInstance.AutoMigrate(&entity.User{}, &entity.Auth{}, &entity.ResetPasswordToken{}); err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
 

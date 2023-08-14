@@ -6,11 +6,6 @@ import (
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
-type PasswordHashService interface {
-	HashPassword(password string) (string, error)
-	ComparePassword(hashedPassword string, password string) error
-}
-
 type BcryptService struct{}
 
 func (b *BcryptService) HashPassword(password string) (string, error) {

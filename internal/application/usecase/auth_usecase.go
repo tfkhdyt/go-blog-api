@@ -4,15 +4,15 @@ import (
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/repository"
-	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/security"
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/service"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
 type AuthUsecase struct {
-	authRepo            repository.AuthRepository    `di.inject:"authRepo"`
-	userRepo            repository.UserRepository    `di.inject:"userRepo"`
-	passwordHashService security.PasswordHashService `di.inject:"passwordHashService"`
-	authTokenService    security.AuthTokenService    `di.inject:"authTokenService"`
+	authRepo            repository.AuthRepository   `di.inject:"authRepo"`
+	userRepo            repository.UserRepository   `di.inject:"userRepo"`
+	passwordHashService service.PasswordHashService `di.inject:"passwordHashService"`
+	authTokenService    service.AuthTokenService    `di.inject:"authTokenService"`
 }
 
 func (a *AuthUsecase) Register(payload *dto.RegisterRequest) (*dto.RegisterResponse, error) {

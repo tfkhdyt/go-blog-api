@@ -32,12 +32,21 @@ func init() {
 
 	di.RegisterBean("userUsecase", reflect.TypeOf((*usecase.UserUsecase)(nil)))
 	di.RegisterBean("authUsecase", reflect.TypeOf((*usecase.AuthUsecase)(nil)))
+	di.RegisterBean(
+		"resetPasswordTokenUsecase",
+		reflect.TypeOf((*usecase.ResetPasswordTokenUsecase)(nil)),
+	)
 
 	di.RegisterBean("userRepo", reflect.TypeOf((*postgres.UserRepositoryPostgres)(nil)))
 	di.RegisterBean("authRepo", reflect.TypeOf((*postgres.AuthRepositoryPostgres)(nil)))
+	di.RegisterBean(
+		"resetPasswordTokenRepo",
+		reflect.TypeOf((*postgres.ResetPasswordTokenRepositoryPostgres)(nil)),
+	)
 
 	di.RegisterBean("passwordHashService", reflect.TypeOf((*security.BcryptService)(nil)))
 	di.RegisterBean("authTokenService", reflect.TypeOf((*security.JwtService)(nil)))
+	di.RegisterBean("idService", reflect.TypeOf((*security.UUIDService)(nil)))
 
 	di.RegisterBeanInstance("database", database.PostgresInstance)
 

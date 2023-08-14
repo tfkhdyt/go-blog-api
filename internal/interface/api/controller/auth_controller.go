@@ -14,7 +14,8 @@ import (
 )
 
 type AuthController struct {
-	authUsecase *usecase.AuthUsecase `di.inject:"authUsecase"`
+	authUsecase               *usecase.AuthUsecase               `di.inject:"authUsecase"`
+	resetPasswordTokenUsecase *usecase.ResetPasswordTokenUsecase `di.inject:"resetPasswordTokenUsecase"`
 }
 
 func (a *AuthController) Register(c *fiber.Ctx) error {
@@ -165,4 +166,22 @@ func (a *AuthController) ChangePassword(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(response)
+}
+
+func (a *AuthController) GetResetPasswordToken(c *fiber.Ctx) error {
+	payload := new(dto.GetResetPasswordTokenRequest)
+	if err := c.BodyParser(payload); err != nil {
+		return exception.NewHTTPError(422, "failed to parse body")
+	}
+
+	if _, err := govalidator.ValidateStruct(payload); err != nil {
+		return validator.NewValidationError(err)
+	}
+
+	response, errToken := a.resetPasswordTokenUsecase.GetResetPasswordToken(payload)
+	if errToken != nil {
+		return errToken
+	}
+
+	return c.Status(202).JSON(response)
 }
