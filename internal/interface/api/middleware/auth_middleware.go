@@ -4,7 +4,7 @@ import (
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 
-	"codeberg.org/tfkhdyt/blog-api/internal/interface/config"
+	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/config"
 	"codeberg.org/tfkhdyt/blog-api/pkg/auth"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )

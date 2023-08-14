@@ -5,7 +5,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"codeberg.org/tfkhdyt/blog-api/internal/interface/config"
+	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/config"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
