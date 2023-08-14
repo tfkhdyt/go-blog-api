@@ -32,7 +32,7 @@ func seedAdmin() {
 
 	admin := &entity.User{
 		FullName: "admin",
-		Email:    "admin@tfkhdyt.my.id",
+		Email:    os.Getenv("ADMIN_EMAIL"),
 		Password: os.Getenv("ADMIN_PASSWORD"),
 		Role:     "admin",
 		Username: "admin",
