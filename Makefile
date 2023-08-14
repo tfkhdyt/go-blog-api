@@ -37,12 +37,12 @@ clean:
 	rm -f ./bin/* ./cover.out
 
 db-start:
-	sudo systemctl start postgresql
+	systemctl is-active postgresql || systemctl start postgresql
 
 db-stop:
-	sudo systemctl stop postgresql
+	systemctl is-active postgresql && systemctl stop postgresql
 
 db-status:
-	sudo systemctl status postgresql
+	systemctl status postgresql
 
 .PHONY: build install start dev dev-watch test test-cover test-cover-watch test-cover-html generate clean db-start db-stop db-status
