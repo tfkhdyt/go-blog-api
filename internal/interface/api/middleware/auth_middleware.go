@@ -1,16 +1,19 @@
 package middleware
 
 import (
+	"os"
+
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 
-	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/config"
 	"codeberg.org/tfkhdyt/blog-api/pkg/auth"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
+var jwtAccessTokenKey = os.Getenv("JWT_ACCESS_TOKEN_KEY")
+
 var JwtMiddleware = jwtware.New(jwtware.Config{
-	SigningKey:  jwtware.SigningKey{Key: []byte(config.JwtAccessTokenKey)},
+	SigningKey:  jwtware.SigningKey{Key: []byte(jwtAccessTokenKey)},
 	TokenLookup: "header:Authorization,cookie:accessToken",
 	AuthScheme:  "Bearer",
 	ErrorHandler: func(c *fiber.Ctx, err error) error {
