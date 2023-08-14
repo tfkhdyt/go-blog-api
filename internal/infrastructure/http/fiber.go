@@ -15,8 +15,8 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"
-	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/database"
-	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/repository/postgres"
+	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/database/postgres"
+	postgresRepo "codeberg.org/tfkhdyt/blog-api/internal/infrastructure/repository/postgres"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/security"
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/controller"
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/route"
@@ -38,18 +38,18 @@ func init() {
 		reflect.TypeOf((*usecase.ResetPasswordTokenUsecase)(nil)),
 	)
 
-	di.RegisterBean("userRepo", reflect.TypeOf((*postgres.UserRepositoryPostgres)(nil)))
-	di.RegisterBean("authRepo", reflect.TypeOf((*postgres.AuthRepositoryPostgres)(nil)))
+	di.RegisterBean("userRepo", reflect.TypeOf((*postgresRepo.UserRepositoryPostgres)(nil)))
+	di.RegisterBean("authRepo", reflect.TypeOf((*postgresRepo.AuthRepositoryPostgres)(nil)))
 	di.RegisterBean(
 		"resetPasswordTokenRepo",
-		reflect.TypeOf((*postgres.ResetPasswordTokenRepositoryPostgres)(nil)),
+		reflect.TypeOf((*postgresRepo.ResetPasswordTokenRepositoryPostgres)(nil)),
 	)
 
 	di.RegisterBean("passwordHashService", reflect.TypeOf((*security.BcryptService)(nil)))
 	di.RegisterBean("authTokenService", reflect.TypeOf((*security.JwtService)(nil)))
 	di.RegisterBean("idService", reflect.TypeOf((*security.UUIDService)(nil)))
 
-	di.RegisterBeanInstance("database", database.PostgresInstance)
+	di.RegisterBeanInstance("database", postgres.PostgresInstance)
 
 	di.InitializeContainer()
 }
