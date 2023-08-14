@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/goioc/di"
 	_ "github.com/joho/godotenv/autoload"
@@ -77,6 +78,7 @@ func StartFiber() {
 		},
 	})
 	app.Use(recover.New())
+	app.Use(pprof.New())
 	port := flag.Uint("port", 8080, "server port")
 	flag.Parse()
 
