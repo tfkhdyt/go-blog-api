@@ -52,7 +52,7 @@ func seedAdmin() {
 	log.Println("Admin account seed success!")
 }
 
-func init() {
+func initPostgres() {
 	PostgresInstance, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalln("Error:", err.Error())

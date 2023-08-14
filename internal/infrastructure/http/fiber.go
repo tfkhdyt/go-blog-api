@@ -24,7 +24,7 @@ import (
 	"codeberg.org/tfkhdyt/blog-api/pkg/validator"
 )
 
-func init() {
+func initFiber() {
 	di.RegisterBean("userRoute", reflect.TypeOf((*route.UserRoute)(nil)))
 	di.RegisterBean("authRoute", reflect.TypeOf((*route.AuthRoute)(nil)))
 
