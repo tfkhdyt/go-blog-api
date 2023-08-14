@@ -65,7 +65,6 @@ func (u *UserUsecase) UpdateUser(
 	updatedUser, errUpdate := u.userRepo.UpdateUser(oldUser, &entity.User{
 		FullName: payload.FullName,
 		Username: payload.Username,
-		Email:    payload.Email,
 	})
 	if errUpdate != nil {
 		return nil, errUpdate

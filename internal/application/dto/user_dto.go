@@ -22,7 +22,7 @@ type FindOneUserResponse struct {
 type UpdateUserRequest struct {
 	FullName string `json:"full_name" valid:"stringlength(3|50)~full name length should be between 3 - 50 chars"`
 	Username string `json:"username"  valid:"stringlength(3|16)~username length should be between 3 - 16 chars"`
-	Email    string `json:"email"     valid:"email~invalid email"`
+	// Email    string `json:"email"     valid:"email~invalid email"`
 }
 
 // func (r *UpdateUserRequest) Validate() (*User, error) {
