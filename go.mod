@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.48.0
 	github.com/goioc/di v1.7.1
 	github.com/golang-jwt/jwt/v5 v5.0.0
+	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.11.0
 	gorm.io/driver/postgres v1.5.2
@@ -17,7 +18,6 @@ require (
 require (
 	github.com/MicahParks/keyfunc/v2 v2.1.0 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.4.2 // indirect
