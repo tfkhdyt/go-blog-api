@@ -28,7 +28,6 @@ func registerBeans(beans ...bean) {
 }
 
 func InitDI() {
-	// routes
 	registerBeans(
 		bean{
 			beanID:   "userRoute",
