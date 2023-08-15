@@ -2,13 +2,13 @@ package database
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
+	"codeberg.org/tfkhdyt/blog-api/config"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/security"
 )
@@ -16,15 +16,6 @@ import (
 var (
 	PostgresInstance *gorm.DB
 	err              error
-	dbUsername       = os.Getenv("DB_USERNAME")
-	dbPassword       = os.Getenv("DB_PASSWORD")
-	dbHost           = os.Getenv("DB_HOST")
-	dbPort           = os.Getenv("DB_PORT")
-	dbName           = os.Getenv("DB_NAME")
-	dsn              = fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		dbHost, dbUsername, dbPassword, dbName, dbPort,
-	)
 )
 
 func seedAdmin() {
@@ -53,7 +44,7 @@ func seedAdmin() {
 }
 
 func initPostgres() {
-	PostgresInstance, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	PostgresInstance, err = gorm.Open(postgres.Open(config.PostgesDSN), &gorm.Config{})
 	if err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
