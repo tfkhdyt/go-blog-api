@@ -1,6 +1,7 @@
 package container
 
 import (
+	"log"
 	"reflect"
 
 	"github.com/goioc/di"
@@ -13,56 +14,86 @@ import (
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/route"
 )
 
+type bean struct {
+	beanType reflect.Type
+	beanID   string
+}
+
+func registerBeans(beans ...bean) {
+	for _, bean := range beans {
+		if _, err := di.RegisterBean(bean.beanID, bean.beanType); err != nil {
+			log.Fatalln("Error:", err.Error())
+		}
+	}
+}
+
 func InitDI() {
 	// routes
-	di.RegisterBean("userRoute", reflect.TypeOf((*route.UserRoute)(nil)))
-	di.RegisterBean("authRoute", reflect.TypeOf((*route.AuthRoute)(nil)))
+	registerBeans(
+		bean{
+			beanID:   "userRoute",
+			beanType: reflect.TypeOf((*route.UserRoute)(nil)),
+		},
+		bean{
+			beanID:   "authRoute",
+			beanType: reflect.TypeOf((*route.AuthRoute)(nil)),
+		},
+		bean{
+			beanID:   "userController",
+			beanType: reflect.TypeOf((*controller.UserController)(nil)),
+		},
+		bean{
+			beanID:   "authController",
+			beanType: reflect.TypeOf((*controller.AuthController)(nil)),
+		},
+		bean{
+			beanID:   "userUsecase",
+			beanType: reflect.TypeOf((*usecase.UserUsecase)(nil)),
+		},
+		bean{
+			beanID:   "authUsecase",
+			beanType: reflect.TypeOf((*usecase.AuthUsecase)(nil)),
+		},
+		bean{
+			beanID:   "resetPasswordTokenUsecase",
+			beanType: reflect.TypeOf((*usecase.ResetPasswordTokenUsecase)(nil)),
+		},
+		bean{
+			beanID:   "userRepo",
+			beanType: reflect.TypeOf((*postgres.UserRepositoryPostgres)(nil)),
+		},
+		bean{
+			beanID:   "authRepo",
+			beanType: reflect.TypeOf((*postgres.AuthRepositoryPostgres)(nil)),
+		},
+		bean{
+			beanID: "resetPasswordTokenRepo",
+			beanType: reflect.TypeOf(
+				(*postgres.ResetPasswordTokenRepositoryPostgres)(nil),
+			),
+		},
+		bean{
+			beanID:   "passwordHashService",
+			beanType: reflect.TypeOf((*security.BcryptService)(nil)),
+		},
+		bean{
+			beanID:   "authTokenService",
+			beanType: reflect.TypeOf((*security.JwtService)(nil)),
+		},
+		bean{
+			beanID:   "idService",
+			beanType: reflect.TypeOf((*security.UUIDService)(nil)),
+		},
+	)
 
-	// controllers
-	di.RegisterBean(
-		"userController",
-		reflect.TypeOf((*controller.UserController)(nil)),
-	)
-	di.RegisterBean(
-		"authController",
-		reflect.TypeOf((*controller.AuthController)(nil)),
-	)
+	if _, err := di.RegisterBeanInstance(
+		"database",
+		database.PostgresInstance,
+	); err != nil {
+		log.Fatalln("Error:", err.Error())
+	}
 
-	// usecases
-	di.RegisterBean("userUsecase", reflect.TypeOf((*usecase.UserUsecase)(nil)))
-	di.RegisterBean("authUsecase", reflect.TypeOf((*usecase.AuthUsecase)(nil)))
-	di.RegisterBean(
-		"resetPasswordTokenUsecase",
-		reflect.TypeOf((*usecase.ResetPasswordTokenUsecase)(nil)),
-	)
-
-	// repositories
-	di.RegisterBean(
-		"userRepo",
-		reflect.TypeOf((*postgres.UserRepositoryPostgres)(nil)),
-	)
-	di.RegisterBean(
-		"authRepo",
-		reflect.TypeOf((*postgres.AuthRepositoryPostgres)(nil)),
-	)
-	di.RegisterBean(
-		"resetPasswordTokenRepo",
-		reflect.TypeOf((*postgres.ResetPasswordTokenRepositoryPostgres)(nil)),
-	)
-
-	// services
-	di.RegisterBean(
-		"passwordHashService",
-		reflect.TypeOf((*security.BcryptService)(nil)),
-	)
-	di.RegisterBean(
-		"authTokenService",
-		reflect.TypeOf((*security.JwtService)(nil)),
-	)
-	di.RegisterBean("idService", reflect.TypeOf((*security.UUIDService)(nil)))
-
-	// databases
-	di.RegisterBeanInstance("database", database.PostgresInstance)
-
-	di.InitializeContainer()
+	if err := di.InitializeContainer(); err != nil {
+		log.Fatalln("Error:", err.Error())
+	}
 }
