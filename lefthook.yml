@@ -11,5 +11,4 @@ pre-push:
   parallel: true
   commands:
     security:
-      glob: "*.go"
       run: gosec ./...
