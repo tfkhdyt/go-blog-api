@@ -1,17 +1,22 @@
 package container
 
 import (
+	"context"
 	"log"
 	"reflect"
 
 	"github.com/goioc/di"
+	"github.com/mailjet/mailjet-apiv3-go/v4"
 
+	"codeberg.org/tfkhdyt/blog-api/config"
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/database"
+	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/email"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/repository/postgres"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/security"
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/controller"
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/route"
+	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
 type bean struct {
@@ -83,11 +88,30 @@ func InitDI() {
 			beanID:   "idService",
 			beanType: reflect.TypeOf((*security.UUIDService)(nil)),
 		},
+		bean{
+			beanID:   "emailService",
+			beanType: reflect.TypeOf((*email.MailjetService)(nil)),
+		},
 	)
 
 	if _, err := di.RegisterBeanInstance(
 		"database",
 		database.PostgresInstance,
+	); err != nil {
+		log.Fatalln("Error:", err.Error())
+	}
+
+	if _, err := di.RegisterBeanFactory(
+		"emailClient",
+		di.Singleton,
+		func(ctx context.Context) (interface{}, error) {
+			client := mailjet.NewMailjetClient(config.MailjetApiKey, config.MailjetSecretKey)
+			if client == nil {
+				return nil, exception.NewHTTPError(500, "failed to initialize email client")
+			}
+
+			return client, nil
+		},
 	); err != nil {
 		log.Fatalln("Error:", err.Error())
 	}

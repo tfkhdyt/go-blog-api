@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"codeberg.org/tfkhdyt/blog-api/config"
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/repository"
@@ -14,6 +15,7 @@ type ResetPasswordTokenUsecase struct {
 	resetPasswordTokenRepo repository.ResetPasswordTokenRepository `di.inject:"resetPasswordTokenRepo"`
 	userRepo               repository.UserRepository               `di.inject:"userRepo"`
 	idService              service.IDService                       `di.inject:"idService"`
+	emailService           service.EmailService                    `di.inject:"emailService"`
 }
 
 func (r *ResetPasswordTokenUsecase) GetResetPasswordToken(
@@ -26,19 +28,32 @@ func (r *ResetPasswordTokenUsecase) GetResetPasswordToken(
 
 	token := r.idService.GenerateID()
 
-	result, errAddToken := r.resetPasswordTokenRepo.AddToken(
+	if _, errAddToken := r.resetPasswordTokenRepo.AddToken(
 		user,
 		&entity.ResetPasswordToken{
 			Token:     token,
 			ExpiresAt: time.Now().Add(5 * time.Minute),
 		},
-	)
-	if errAddToken != nil {
+	); errAddToken != nil {
 		return nil, errAddToken
 	}
 
+	if err := r.emailService.SendMail(
+		entity.Recipient{
+			Email: config.MailSenderEmail,
+			Name:  config.MailSenderName,
+		}, entity.Recipient{
+			Email: user.Email,
+			Name:  user.FullName,
+		},
+		"Reset Password Token",
+		fmt.Sprintf("Your reset password token is <b>%v<b>", token),
+	); err != nil {
+		return nil, err
+	}
+
 	response := dto.GetResetPasswordTokenResponse{
-		Message: fmt.Sprintf("your token is %s", result.Token),
+		Message: "the password reset token has been sent to your email.",
 	}
 
 	return &response, nil
