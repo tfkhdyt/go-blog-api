@@ -16,3 +16,15 @@ func (h *HttpError) StatusCode() uint {
 func NewHTTPError(statusCode uint, message string) *HttpError {
 	return &HttpError{message, statusCode}
 }
+
+type ValidationError struct {
+	Err error
+}
+
+func NewValidationError(err error) *ValidationError {
+	return &ValidationError{err}
+}
+
+func (e *ValidationError) Error() string {
+	return e.Err.Error()
+}
