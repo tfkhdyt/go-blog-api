@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/goioc/di"
-	"github.com/mailjet/mailjet-apiv3-go/v4"
+	"github.com/resendlabs/resend-go"
 
 	"codeberg.org/tfkhdyt/blog-api/config"
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"
@@ -90,7 +90,7 @@ func InitDI() {
 		},
 		bean{
 			beanID:   "emailService",
-			beanType: reflect.TypeOf((*email.MailjetService)(nil)),
+			beanType: reflect.TypeOf((*email.ResendService)(nil)),
 		},
 	)
 
@@ -104,8 +104,8 @@ func InitDI() {
 	if _, err := di.RegisterBeanFactory(
 		"emailClient",
 		di.Singleton,
-		func(ctx context.Context) (interface{}, error) {
-			client := mailjet.NewMailjetClient(config.MailjetApiKey, config.MailjetSecretKey)
+		func(_ context.Context) (interface{}, error) {
+			client := resend.NewClient(config.ResendApiKey)
 			if client == nil {
 				return nil, exception.NewHTTPError(500, "failed to initialize email client")
 			}
