@@ -11,7 +11,9 @@ type AuthRepositoryPostgres struct {
 	db *gorm.DB `di.inject:"database"`
 }
 
-func (a *AuthRepositoryPostgres) AddToken(auth *entity.Auth) (*entity.Auth, error) {
+func (a *AuthRepositoryPostgres) AddToken(
+	auth *entity.Auth,
+) (*entity.Auth, error) {
 	if err := a.db.Create(auth).Error; err != nil {
 		return nil, exception.NewHTTPError(500, "failed to add refresh token")
 	}
@@ -29,7 +31,11 @@ func (a *AuthRepositoryPostgres) VerifyToken(token string) error {
 }
 
 func (a *AuthRepositoryPostgres) RemoveToken(token string) error {
-	if err := a.db.Delete(&entity.Auth{}, "refresh_token = ?", token).Error; err != nil {
+	if err := a.db.Delete(
+		&entity.Auth{},
+		"refresh_token = ?",
+		token,
+	).Error; err != nil {
 		return exception.NewHTTPError(500, "failed to delete refresh token")
 	}
 

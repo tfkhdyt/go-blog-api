@@ -13,7 +13,9 @@ type UserRepositoryPostgres struct {
 	db *gorm.DB `di.inject:"database"`
 }
 
-func (u *UserRepositoryPostgres) Register(newUser *entity.User) (*entity.User, error) {
+func (u *UserRepositoryPostgres) Register(
+	newUser *entity.User,
+) (*entity.User, error) {
 	if err := u.db.Create(newUser).Error; err != nil {
 		return nil, exception.NewHTTPError(500, "failed to register new user")
 	}
@@ -30,16 +32,21 @@ func (u *UserRepositoryPostgres) FindAllUsers() (*[]entity.User, error) {
 	return users, nil
 }
 
-func (u *UserRepositoryPostgres) FindOneUser(userId uint) (*entity.User, error) {
+func (u *UserRepositoryPostgres) FindOneUser(
+	userId uint,
+) (*entity.User, error) {
 	user := new(entity.User)
 	if err := u.db.First(user, userId).Error; err != nil {
-		return nil, exception.NewHTTPError(404, fmt.Sprintf("user with id %d is not found", userId))
+		return nil, exception.
+			NewHTTPError(404, fmt.Sprintf("user with id %d is not found", userId))
 	}
 
 	return user, nil
 }
 
-func (u *UserRepositoryPostgres) FindOneUserByEmail(email string) (*entity.User, error) {
+func (u *UserRepositoryPostgres) FindOneUserByEmail(
+	email string,
+) (*entity.User, error) {
 	user := new(entity.User)
 	if err := u.db.First(user, "email = ?", email).Error; err != nil {
 		return nil, exception.NewHTTPError(

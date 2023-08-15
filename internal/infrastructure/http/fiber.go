@@ -14,7 +14,6 @@ import (
 
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/route"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
-	"codeberg.org/tfkhdyt/blog-api/pkg/validator"
 )
 
 func StartFiberServer() {
@@ -27,7 +26,7 @@ func StartFiberServer() {
 				code = int(e.StatusCode())
 			}
 
-			var valErr *validator.Error
+			var valErr *exception.ValidationError
 			if errors.As(err, &valErr) {
 				errs := strings.Split(err.Error(), ";")
 				return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{

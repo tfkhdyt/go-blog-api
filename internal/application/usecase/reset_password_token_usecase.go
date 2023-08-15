@@ -26,10 +26,13 @@ func (r *ResetPasswordTokenUsecase) GetResetPasswordToken(
 
 	token := r.idService.GenerateID()
 
-	result, errAddToken := r.resetPasswordTokenRepo.AddToken(user, &entity.ResetPasswordToken{
-		Token:     token,
-		ExpiresAt: time.Now().Add(5 * time.Minute),
-	})
+	result, errAddToken := r.resetPasswordTokenRepo.AddToken(
+		user,
+		&entity.ResetPasswordToken{
+			Token:     token,
+			ExpiresAt: time.Now().Add(5 * time.Minute),
+		},
+	)
 	if errAddToken != nil {
 		return nil, errAddToken
 	}

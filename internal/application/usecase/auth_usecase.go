@@ -15,7 +15,9 @@ type AuthUsecase struct {
 	authTokenService    service.AuthTokenService    `di.inject:"authTokenService"`
 }
 
-func (a *AuthUsecase) Register(payload *dto.RegisterRequest) (*dto.RegisterResponse, error) {
+func (a *AuthUsecase) Register(
+	payload *dto.RegisterRequest,
+) (*dto.RegisterResponse, error) {
 	hashedPassword, err := a.passwordHashService.HashPassword(payload.Password)
 	if err != nil {
 		return nil, err
@@ -43,22 +45,33 @@ func (a *AuthUsecase) Register(payload *dto.RegisterRequest) (*dto.RegisterRespo
 	return &response, nil
 }
 
-func (a *AuthUsecase) Login(payload *dto.LoginRequest) (*dto.LoginResponse, error) {
+func (a *AuthUsecase) Login(
+	payload *dto.LoginRequest,
+) (*dto.LoginResponse, error) {
 	user, err := a.userRepo.FindOneUserByEmail(payload.Email)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := a.passwordHashService.ComparePassword(user.Password, payload.Password); err != nil {
+	if err := a.passwordHashService.ComparePassword(
+		user.Password,
+		payload.Password,
+	); err != nil {
 		return nil, err
 	}
 
-	accessToken, errAccessToken := a.authTokenService.CreateAccessToken(user.ID, user.Role)
+	accessToken, errAccessToken := a.authTokenService.CreateAccessToken(
+		user.ID,
+		user.Role,
+	)
 	if errAccessToken != nil {
 		return nil, errAccessToken
 	}
 
-	refreshToken, errRefreshToken := a.authTokenService.CreateRefreshToken(user.ID, user.Role)
+	refreshToken, errRefreshToken := a.authTokenService.CreateRefreshToken(
+		user.ID,
+		user.Role,
+	)
 	if errRefreshToken != nil {
 		return nil, errRefreshToken
 	}
@@ -90,7 +103,10 @@ func (a *AuthUsecase) Refresh(
 		return nil, err
 	}
 
-	accessToken, errAccessToken := a.authTokenService.CreateAccessToken(user.ID, user.Role)
+	accessToken, errAccessToken := a.authTokenService.CreateAccessToken(
+		user.ID,
+		user.Role,
+	)
 	if errAccessToken != nil {
 		return nil, errAccessToken
 	}
@@ -102,7 +118,9 @@ func (a *AuthUsecase) Refresh(
 	return &response, nil
 }
 
-func (a *AuthUsecase) Logout(refreshToken string) (*dto.LogoutResponse, error) {
+func (a *AuthUsecase) Logout(
+	refreshToken string,
+) (*dto.LogoutResponse, error) {
 	if err := a.authRepo.RemoveToken(refreshToken); err != nil {
 		return nil, err
 	}
@@ -123,15 +141,21 @@ func (a *AuthUsecase) ChangePassword(
 		return nil, err
 	}
 
-	if err := a.passwordHashService.ComparePassword(user.Password, payload.OldPassword); err != nil {
+	if err := a.passwordHashService.ComparePassword(
+		user.Password,
+		payload.OldPassword,
+	); err != nil {
 		return nil, err
 	}
 
 	if payload.NewPassword != payload.ConfirmPassword {
-		return nil, exception.NewHTTPError(400, "new and confirm password is not the same")
+		return nil, exception.
+			NewHTTPError(400, "new and confirm password is not the same")
 	}
 
-	hashedPassword, errHash := a.passwordHashService.HashPassword(payload.NewPassword)
+	hashedPassword, errHash := a.passwordHashService.HashPassword(
+		payload.NewPassword,
+	)
 	if errHash != nil {
 		return nil, errHash
 	}

@@ -44,20 +44,28 @@ func seedAdmin() {
 }
 
 func initPostgres() {
-	PostgresInstance, err = gorm.Open(postgres.Open(config.PostgesDSN), &gorm.Config{})
+	PostgresInstance, err = gorm.
+		Open(postgres.Open(config.PostgesDSN), &gorm.Config{})
 	if err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
 
-	if err := PostgresInstance.AutoMigrate(&entity.User{}, &entity.Auth{}, &entity.ResetPasswordToken{}); err != nil {
+	if err := PostgresInstance.AutoMigrate(
+		&entity.User{},
+		&entity.Auth{},
+		&entity.ResetPasswordToken{},
+	); err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
 
 	if PostgresInstance.Migrator().HasTable(&entity.User{}) {
-		if err := PostgresInstance.First(&entity.User{}, "role = ?", "admin").Error; errors.Is(
-			err,
-			gorm.ErrRecordNotFound,
-		) {
+		if err := PostgresInstance.
+			First(
+				&entity.User{},
+				"role = ?",
+				"admin",
+			).
+			Error; errors.Is(err, gorm.ErrRecordNotFound) {
 			seedAdmin()
 		}
 	}

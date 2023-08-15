@@ -34,7 +34,9 @@ func (u *UserUsecase) FindAllUsers() (*dto.FindAllUsersResponse, error) {
 	return &response, nil
 }
 
-func (u *UserUsecase) FindOneUser(userId uint) (*dto.FindOneUserResponse, error) {
+func (u *UserUsecase) FindOneUser(
+	userId uint,
+) (*dto.FindOneUserResponse, error) {
 	usr, err := u.userRepo.FindOneUser(userId)
 	if err != nil {
 		return nil, err
@@ -82,7 +84,9 @@ func (u *UserUsecase) UpdateUser(
 	return &response, nil
 }
 
-func (u *UserUsecase) DeleteUser(userId uint) (*dto.DeleteUserResponse, error) {
+func (u *UserUsecase) DeleteUser(
+	userId uint,
+) (*dto.DeleteUserResponse, error) {
 	if _, err := u.userRepo.FindOneUser(userId); err != nil {
 		return nil, err
 	}

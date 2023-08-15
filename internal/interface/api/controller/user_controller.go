@@ -8,7 +8,6 @@ import (
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"
 	"codeberg.org/tfkhdyt/blog-api/pkg/auth"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
-	"codeberg.org/tfkhdyt/blog-api/pkg/validator"
 )
 
 type UserController struct {
@@ -67,7 +66,7 @@ func (u *UserController) UpdateUser(c *fiber.Ctx) error {
 	}
 
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
-		return validator.NewValidationError(err)
+		return exception.NewValidationError(err)
 	}
 
 	updatedUser, errUpdate := u.userUsecase.UpdateUser(uint(userId), payload)
@@ -89,7 +88,7 @@ func (u *UserController) UpdateMyUser(c *fiber.Ctx) error {
 	}
 
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
-		return validator.NewValidationError(err)
+		return exception.NewValidationError(err)
 	}
 
 	updatedUser, errUpdate := u.userUsecase.UpdateUser(uint(userId), payload)

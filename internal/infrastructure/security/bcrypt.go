@@ -17,8 +17,14 @@ func (b *BcryptService) HashPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-func (b *BcryptService) ComparePassword(hashedPassword string, password string) error {
-	if err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)); err != nil {
+func (b *BcryptService) ComparePassword(
+	hashedPassword string,
+	password string,
+) error {
+	if err := bcrypt.CompareHashAndPassword(
+		[]byte(hashedPassword),
+		[]byte(password),
+	); err != nil {
 		return exception.NewHTTPError(400, "invalid password")
 	}
 

@@ -19,7 +19,8 @@ func (j *JwtService) CreateAccessToken(id uint, role string) (string, error) {
 		"exp":    time.Now().Add(15 * time.Minute).Unix(),
 	})
 	if token == nil {
-		return "", exception.NewHTTPError(500, "failed to to create new access token")
+		return "", exception.
+			NewHTTPError(500, "failed to to create new access token")
 	}
 
 	signedString, err := token.SignedString([]byte(config.JwtAccessTokenKey))
@@ -38,7 +39,8 @@ func (j *JwtService) CreateRefreshToken(id uint, role string) (string, error) {
 		"exp":    time.Now().Add(720 * time.Hour).Unix(),
 	})
 	if token == nil {
-		return "", exception.NewHTTPError(500, "failed to to create new refresh token")
+		return "", exception.
+			NewHTTPError(500, "failed to to create new refresh token")
 	}
 
 	signedString, err := token.SignedString([]byte(config.JwtRefreshTokenKey))

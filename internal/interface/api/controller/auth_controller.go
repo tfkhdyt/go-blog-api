@@ -8,9 +8,8 @@ import (
 
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"
-	authHelper "codeberg.org/tfkhdyt/blog-api/pkg/auth"
+	"codeberg.org/tfkhdyt/blog-api/pkg/auth"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
-	"codeberg.org/tfkhdyt/blog-api/pkg/validator"
 )
 
 type AuthController struct {
@@ -25,7 +24,7 @@ func (a *AuthController) Register(c *fiber.Ctx) error {
 	}
 
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
-		return validator.NewValidationError(err)
+		return exception.NewValidationError(err)
 	}
 
 	registeredUser, err := a.authUsecase.Register(payload)
@@ -45,7 +44,7 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 	}
 
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
-		return validator.NewValidationError(err)
+		return exception.NewValidationError(err)
 	}
 
 	response, err := a.authUsecase.Login(payload)
@@ -75,7 +74,7 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 }
 
 func (a *AuthController) Refresh(c *fiber.Ctx) error {
-	userId := authHelper.GetUserIDFromClaims(c)
+	userId := auth.GetUserIDFromClaims(c)
 
 	payload := new(dto.RefreshRequest)
 	if err := c.BodyParser(payload); err != nil {
@@ -88,7 +87,7 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 	}
 
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
-		return validator.NewValidationError(err)
+		return exception.NewValidationError(err)
 	}
 
 	response, err := a.authUsecase.Refresh(uint(userId), payload)
@@ -121,7 +120,7 @@ func (a *AuthController) Logout(c *fiber.Ctx) error {
 	}
 
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
-		return validator.NewValidationError(err)
+		return exception.NewValidationError(err)
 	}
 
 	response, err := a.authUsecase.Logout(payload.RefreshToken)
@@ -149,7 +148,7 @@ func (a *AuthController) Logout(c *fiber.Ctx) error {
 }
 
 func (a *AuthController) ChangePassword(c *fiber.Ctx) error {
-	userId := authHelper.GetUserIDFromClaims(c)
+	userId := auth.GetUserIDFromClaims(c)
 
 	payload := new(dto.ChangePasswordRequest)
 	if err := c.BodyParser(payload); err != nil {
@@ -157,7 +156,7 @@ func (a *AuthController) ChangePassword(c *fiber.Ctx) error {
 	}
 
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
-		return validator.NewValidationError(err)
+		return exception.NewValidationError(err)
 	}
 
 	response, errChangePassword := a.authUsecase.ChangePassword(userId, payload)
@@ -175,10 +174,11 @@ func (a *AuthController) GetResetPasswordToken(c *fiber.Ctx) error {
 	}
 
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
-		return validator.NewValidationError(err)
+		return exception.NewValidationError(err)
 	}
 
-	response, errToken := a.resetPasswordTokenUsecase.GetResetPasswordToken(payload)
+	response, errToken := a.resetPasswordTokenUsecase.
+		GetResetPasswordToken(payload)
 	if errToken != nil {
 		return errToken
 	}

@@ -25,7 +25,8 @@ var IsAdmin = func(c *fiber.Ctx) error {
 	role := auth.GetRoleFromClaims(c)
 
 	if role != "admin" {
-		return exception.NewHTTPError(403, "you're not allowed to access this endpoint")
+		return exception.
+			NewHTTPError(403, "you're not allowed to access this endpoint")
 	}
 
 	return c.Next()
