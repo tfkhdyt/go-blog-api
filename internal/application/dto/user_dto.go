@@ -25,18 +25,6 @@ type UpdateUserRequest struct {
 	// Email    string `json:"email"     valid:"email~invalid email"`
 }
 
-// func (r *UpdateUserRequest) Validate() (*User, error) {
-// 	if _, err := govalidator.ValidateStruct(r); err != nil {
-// 		return nil, validator.NewValidationError(err)
-// 	}
-//
-// 	return &User{
-// 		FullName: r.FullName,
-// 		Username: r.Username,
-// 		Email:    r.Email,
-// 	}, nil
-// }
-
 type UpdateUserResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	FullName  string    `json:"full_name"`
