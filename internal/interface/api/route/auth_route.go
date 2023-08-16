@@ -15,6 +15,7 @@ func (a *AuthRoute) RegisterRoute(router fiber.Router) {
 	router.Post("/register", a.authController.Register)
 	router.Post("/login", a.authController.Login)
 	router.Post("/password/reset", a.authController.GetResetPasswordToken)
+	router.Patch("/password/reset/:token", a.authController.ResetPassword)
 
 	router.Put("/refresh", middleware.JwtMiddleware, a.authController.Refresh)
 	router.Delete("/logout", middleware.JwtMiddleware, a.authController.Logout)

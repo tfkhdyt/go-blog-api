@@ -7,5 +7,6 @@ type ResetPasswordTokenRepository interface {
 		user *entity.User,
 		token *entity.ResetPasswordToken,
 	) (*entity.ResetPasswordToken, error)
+	FindToken(token string) (*entity.ResetPasswordToken, error)
 	RemoveToken(token string) error
 }
