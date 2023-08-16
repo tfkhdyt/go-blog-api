@@ -39,3 +39,14 @@ func (r *ResetPasswordTokenRepositoryPostgres) RemoveToken(
 
 	return nil
 }
+
+func (r *ResetPasswordTokenRepositoryPostgres) FindToken(
+	token string,
+) (*entity.ResetPasswordToken, error) {
+	tkn := new(entity.ResetPasswordToken)
+	if err := r.db.First(tkn, "token = ?", token).Error; err != nil {
+		return nil, exception.NewHTTPError(404, "token is not found")
+	}
+
+	return tkn, nil
+}

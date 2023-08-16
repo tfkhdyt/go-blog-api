@@ -14,8 +14,8 @@ type ResendService struct {
 }
 
 func (r *ResendService) SendMail(
-	from entity.Recipient,
-	to entity.Recipient,
+	from *entity.Recipient,
+	to *entity.Recipient,
 	subject string,
 	body string,
 ) error {

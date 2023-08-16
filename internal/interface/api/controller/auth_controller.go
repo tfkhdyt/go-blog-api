@@ -185,3 +185,23 @@ func (a *AuthController) GetResetPasswordToken(c *fiber.Ctx) error {
 
 	return c.Status(202).JSON(response)
 }
+
+func (a *AuthController) ResetPassword(c *fiber.Ctx) error {
+	token := c.Params("token")
+
+	payload := new(dto.ResetPasswordRequest)
+	if err := c.BodyParser(payload); err != nil {
+		return exception.NewHTTPError(422, "failed to parse body")
+	}
+
+	if _, err := govalidator.ValidateStruct(payload); err != nil {
+		return exception.NewValidationError(err)
+	}
+
+	response, err := a.resetPasswordTokenUsecase.ResetPassword(token, payload)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(response)
+}
