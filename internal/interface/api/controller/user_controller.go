@@ -75,7 +75,8 @@ func (u *UserController) UpdateUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"data": updatedUser,
+		"message": "the user data has been updated successfully.",
+		"data":    updatedUser,
 	})
 }
 
@@ -97,7 +98,8 @@ func (u *UserController) UpdateMyUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"data": updatedUser,
+		"message": "your user data has been updated successfully.",
+		"data":    updatedUser,
 	})
 }
 
