@@ -32,8 +32,9 @@ func (a *AuthController) Register(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"data": registeredUser,
+	return c.Status(201).JSON(fiber.Map{
+		"message": "the account registration is successful.",
+		"data":    registeredUser,
 	})
 }
 
@@ -68,7 +69,7 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 		HTTPOnly: true,
 	})
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+	return c.Status(201).JSON(fiber.Map{
 		"data": response,
 	})
 }
