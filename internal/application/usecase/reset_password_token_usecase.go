@@ -82,7 +82,7 @@ func (r *ResetPasswordTokenUsecase) ResetPassword(
 
 	if payload.NewPassword != payload.ConfirmPassword {
 		return nil, exception.
-			NewHTTPError(400, "new and config password is not the same")
+			NewHTTPError(400, "new and confirm password is not the same")
 	}
 
 	hashedPassword, errHash := r.passwordHashService.
