@@ -59,8 +59,12 @@ func InitDI() {
 			beanType: reflect.TypeOf((*usecase.AuthUsecase)(nil)),
 		},
 		bean{
-			beanID:   "resetPasswordTokenUsecase",
-			beanType: reflect.TypeOf((*usecase.ResetPasswordTokenUsecase)(nil)),
+			beanID:   "resetPasswordUsecase",
+			beanType: reflect.TypeOf((*usecase.ResetPasswordUsecase)(nil)),
+		},
+		bean{
+			beanID:   "changeEmailUsecase",
+			beanType: reflect.TypeOf((*usecase.ChangeEmailUsecase)(nil)),
 		},
 		bean{
 			beanID:   "userRepo",
@@ -74,6 +78,12 @@ func InitDI() {
 			beanID: "resetPasswordTokenRepo",
 			beanType: reflect.TypeOf(
 				(*postgres.ResetPasswordTokenRepositoryPostgres)(nil),
+			),
+		},
+		bean{
+			beanID: "changeEmailRequestRepo",
+			beanType: reflect.TypeOf(
+				(*postgres.ChangeEmailRequestRepositoryPostgres)(nil),
 			),
 		},
 		bean{

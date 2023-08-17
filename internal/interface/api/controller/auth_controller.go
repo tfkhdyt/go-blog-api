@@ -13,8 +13,9 @@ import (
 )
 
 type AuthController struct {
-	authUsecase               *usecase.AuthUsecase               `di.inject:"authUsecase"`
-	resetPasswordTokenUsecase *usecase.ResetPasswordTokenUsecase `di.inject:"resetPasswordTokenUsecase"`
+	authUsecase          *usecase.AuthUsecase          `di.inject:"authUsecase"`
+	resetPasswordUsecase *usecase.ResetPasswordUsecase `di.inject:"resetPasswordUsecase"`
+	changeEmailUsecase   *usecase.ChangeEmailUsecase   `di.inject:"changeEmailUsecase"`
 }
 
 func (a *AuthController) Register(c *fiber.Ctx) error {
@@ -180,7 +181,7 @@ func (a *AuthController) GetResetPasswordToken(c *fiber.Ctx) error {
 		return exception.NewValidationError(err)
 	}
 
-	response, errToken := a.resetPasswordTokenUsecase.
+	response, errToken := a.resetPasswordUsecase.
 		GetResetPasswordToken(payload)
 	if errToken != nil {
 		return errToken
@@ -201,7 +202,37 @@ func (a *AuthController) ResetPassword(c *fiber.Ctx) error {
 		return exception.NewValidationError(err)
 	}
 
-	response, err := a.resetPasswordTokenUsecase.ResetPassword(token, payload)
+	response, err := a.resetPasswordUsecase.ResetPassword(token, payload)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(response)
+}
+
+func (a *AuthController) GetChangeEmailToken(c *fiber.Ctx) error {
+	userId := auth.GetUserIDFromClaims(c)
+	payload := new(dto.GetChangeEmailTokenRequest)
+	if err := c.BodyParser(payload); err != nil {
+		return exception.NewHTTPError(422, "failed to parse body")
+	}
+
+	if _, err := govalidator.ValidateStruct(payload); err != nil {
+		return exception.NewValidationError(err)
+	}
+
+	response, err := a.changeEmailUsecase.GetChangeEmailToken(userId, payload)
+	if err != nil {
+		return err
+	}
+
+	return c.Status(202).JSON(response)
+}
+
+func (a *AuthController) ChangeEmail(c *fiber.Ctx) error {
+	token := c.Params("token")
+
+	response, err := a.changeEmailUsecase.ChangeEmail(token)
 	if err != nil {
 		return err
 	}

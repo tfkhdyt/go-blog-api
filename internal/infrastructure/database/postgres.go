@@ -54,6 +54,7 @@ func initPostgres() {
 		&entity.User{},
 		&entity.Auth{},
 		&entity.ResetPasswordToken{},
+		&entity.ChangeEmailRequest{},
 	); err != nil {
 		log.Fatalln("Error:", err.Error())
 	}

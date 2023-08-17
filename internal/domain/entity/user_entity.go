@@ -11,5 +11,6 @@ type User struct {
 	Password            string               `gorm:"not null"`
 	Role                string               `gorm:"not null;default:user;size:10"`
 	ResetPasswordTokens []ResetPasswordToken `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	ChangeEmailRequests []ChangeEmailRequest `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	ID                  uint                 `gorm:"primarykey"`
 }

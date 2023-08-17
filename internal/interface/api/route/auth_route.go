@@ -24,4 +24,14 @@ func (a *AuthRoute) RegisterRoute(router fiber.Router) {
 		middleware.JwtMiddleware,
 		a.authController.ChangePassword,
 	)
+	router.Post(
+		"/email/change",
+		middleware.JwtMiddleware,
+		a.authController.GetChangeEmailToken,
+	)
+	router.Patch(
+		"/email/change/:token",
+		middleware.JwtMiddleware,
+		a.authController.ChangeEmail,
+	)
 }
