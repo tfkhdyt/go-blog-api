@@ -33,7 +33,7 @@ func (a *AuthController) Register(c *fiber.Ctx) error {
 	}
 
 	return c.Status(201).JSON(fiber.Map{
-		"message": "the account registration is successful.",
+		"message": "your account registration has been successful",
 		"data":    registeredUser,
 	})
 }
@@ -70,7 +70,8 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 	})
 
 	return c.Status(201).JSON(fiber.Map{
-		"data": response,
+		"message": "you have successfully logged in",
+		"data":    response,
 	})
 }
 
@@ -105,7 +106,8 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 	})
 
 	return c.JSON(fiber.Map{
-		"data": response,
+		"message": "access token has been refreshed",
+		"data":    response,
 	})
 }
 
