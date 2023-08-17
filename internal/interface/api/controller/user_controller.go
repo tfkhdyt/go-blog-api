@@ -15,14 +15,12 @@ type UserController struct {
 }
 
 func (u *UserController) FindAllUsers(c *fiber.Ctx) error {
-	users, err := u.userUsecase.FindAllUsers()
+	response, err := u.userUsecase.FindAllUsers()
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(fiber.Map{
-		"data": users,
-	})
+	return c.JSON(response)
 }
 
 func (u *UserController) FindOneUser(c *fiber.Ctx) error {
@@ -31,27 +29,23 @@ func (u *UserController) FindOneUser(c *fiber.Ctx) error {
 		return exception.NewHTTPError(400, "invalid user id")
 	}
 
-	usr, errFind := u.userUsecase.FindOneUser(uint(userId))
+	response, errFind := u.userUsecase.FindOneUser(uint(userId))
 	if errFind != nil {
 		return errFind
 	}
 
-	return c.JSON(fiber.Map{
-		"data": usr,
-	})
+	return c.JSON(response)
 }
 
 func (u *UserController) FindMyUser(c *fiber.Ctx) error {
 	userId := auth.GetUserIDFromClaims(c)
 
-	usr, errFind := u.userUsecase.FindOneUser(uint(userId))
+	response, errFind := u.userUsecase.FindOneUser(uint(userId))
 	if errFind != nil {
 		return errFind
 	}
 
-	return c.JSON(fiber.Map{
-		"data": usr,
-	})
+	return c.JSON(response)
 }
 
 func (u *UserController) UpdateUser(c *fiber.Ctx) error {
@@ -69,15 +63,12 @@ func (u *UserController) UpdateUser(c *fiber.Ctx) error {
 		return exception.NewValidationError(err)
 	}
 
-	updatedUser, errUpdate := u.userUsecase.UpdateUser(uint(userId), payload)
+	response, errUpdate := u.userUsecase.UpdateUser(uint(userId), payload)
 	if errUpdate != nil {
 		return errUpdate
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "user data has been updated successfully",
-		"data":    updatedUser,
-	})
+	return c.JSON(response)
 }
 
 func (u *UserController) UpdateMyUser(c *fiber.Ctx) error {
@@ -92,15 +83,12 @@ func (u *UserController) UpdateMyUser(c *fiber.Ctx) error {
 		return exception.NewValidationError(err)
 	}
 
-	updatedUser, errUpdate := u.userUsecase.UpdateUser(uint(userId), payload)
+	response, errUpdate := u.userUsecase.UpdateUser(uint(userId), payload)
 	if errUpdate != nil {
 		return errUpdate
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "your user data has been updated successfully",
-		"data":    updatedUser,
-	})
+	return c.JSON(response)
 }
 
 func (u *UserController) DeleteUser(c *fiber.Ctx) error {

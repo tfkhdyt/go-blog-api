@@ -18,9 +18,9 @@ func (u *UserUsecase) FindAllUsers() (*dto.FindAllUsersResponse, error) {
 		return nil, err
 	}
 
-	response := dto.FindAllUsersResponse{}
+	data := dto.FindAllUsersResponseData{}
 	for _, usr := range *users {
-		response = append(response, dto.FindOneUserResponse{
+		data = append(data, dto.FindOneUserResponseData{
 			ID:        usr.ID,
 			FullName:  usr.FullName,
 			Username:  usr.Username,
@@ -29,6 +29,10 @@ func (u *UserUsecase) FindAllUsers() (*dto.FindAllUsersResponse, error) {
 			CreatedAt: usr.CreatedAt,
 			UpdatedAt: usr.UpdatedAt,
 		})
+	}
+
+	response := dto.FindAllUsersResponse{
+		Data: data,
 	}
 
 	return &response, nil
@@ -43,13 +47,15 @@ func (u *UserUsecase) FindOneUser(
 	}
 
 	response := dto.FindOneUserResponse{
-		ID:        usr.ID,
-		FullName:  usr.FullName,
-		Username:  usr.Username,
-		Email:     usr.Email,
-		Role:      usr.Role,
-		CreatedAt: usr.CreatedAt,
-		UpdatedAt: usr.UpdatedAt,
+		Data: dto.FindOneUserResponseData{
+			ID:        usr.ID,
+			FullName:  usr.FullName,
+			Username:  usr.Username,
+			Email:     usr.Email,
+			Role:      usr.Role,
+			CreatedAt: usr.CreatedAt,
+			UpdatedAt: usr.UpdatedAt,
+		},
 	}
 
 	return &response, nil
@@ -73,12 +79,15 @@ func (u *UserUsecase) UpdateUser(
 	}
 
 	response := dto.UpdateUserResponse{
-		ID:        updatedUser.ID,
-		FullName:  updatedUser.FullName,
-		Username:  updatedUser.Username,
-		Email:     updatedUser.Email,
-		Role:      updatedUser.Role,
-		UpdatedAt: updatedUser.UpdatedAt,
+		Message: "user data has been updated successfully",
+		Data: dto.UpdateUserResponseData{
+			ID:        updatedUser.ID,
+			FullName:  updatedUser.FullName,
+			Username:  updatedUser.Username,
+			Email:     updatedUser.Email,
+			Role:      updatedUser.Role,
+			UpdatedAt: updatedUser.UpdatedAt,
+		},
 	}
 
 	return &response, nil

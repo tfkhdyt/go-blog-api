@@ -34,12 +34,15 @@ func (a *AuthUsecase) Register(
 	}
 
 	response := dto.RegisterResponse{
-		ID:        registeredUser.ID,
-		FullName:  registeredUser.FullName,
-		Username:  registeredUser.Username,
-		Email:     registeredUser.Email,
-		Role:      registeredUser.Role,
-		CreatedAt: registeredUser.CreatedAt,
+		Message: "your account registration has been successful",
+		Data: dto.RegisterResponseData{
+			ID:        registeredUser.ID,
+			FullName:  registeredUser.FullName,
+			Username:  registeredUser.Username,
+			Email:     registeredUser.Email,
+			Role:      registeredUser.Role,
+			CreatedAt: registeredUser.CreatedAt,
+		},
 	}
 
 	return &response, nil
@@ -83,8 +86,11 @@ func (a *AuthUsecase) Login(
 	}
 
 	response := dto.LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		Message: "you have successfully logged in",
+		Data: dto.LoginResponseData{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
 	}
 
 	return &response, nil
@@ -112,7 +118,10 @@ func (a *AuthUsecase) Refresh(
 	}
 
 	response := dto.RefreshResponse{
-		AccessToken: accessToken,
+		Message: "access token has been refreshed",
+		Data: dto.RefreshResponseData{
+			AccessToken: accessToken,
+		},
 	}
 
 	return &response, nil

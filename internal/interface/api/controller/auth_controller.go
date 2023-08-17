@@ -28,15 +28,12 @@ func (a *AuthController) Register(c *fiber.Ctx) error {
 		return exception.NewValidationError(err)
 	}
 
-	registeredUser, err := a.authUsecase.Register(payload)
+	response, err := a.authUsecase.Register(payload)
 	if err != nil {
 		return err
 	}
 
-	return c.Status(201).JSON(fiber.Map{
-		"message": "your account registration has been successful",
-		"data":    registeredUser,
-	})
+	return c.Status(201).JSON(response)
 }
 
 func (a *AuthController) Login(c *fiber.Ctx) error {
@@ -56,7 +53,7 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "accessToken",
-		Value:    response.AccessToken,
+		Value:    response.Data.AccessToken,
 		Path:     "/",
 		Expires:  time.Now().Add(15 * time.Minute),
 		HTTPOnly: true,
@@ -64,16 +61,13 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "refreshToken",
-		Value:    response.RefreshToken,
+		Value:    response.Data.RefreshToken,
 		Path:     "/",
 		Expires:  time.Now().Add(720 * time.Hour),
 		HTTPOnly: true,
 	})
 
-	return c.Status(201).JSON(fiber.Map{
-		"message": "you have successfully logged in",
-		"data":    response,
-	})
+	return c.Status(201).JSON(response)
 }
 
 func (a *AuthController) Refresh(c *fiber.Ctx) error {
@@ -100,16 +94,13 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "accessToken",
-		Value:    response.AccessToken,
+		Value:    response.Data.AccessToken,
 		Path:     "/",
 		Expires:  time.Now().Add(15 * time.Minute),
 		HTTPOnly: true,
 	})
 
-	return c.JSON(fiber.Map{
-		"message": "access token has been refreshed",
-		"data":    response,
-	})
+	return c.JSON(response)
 }
 
 func (a *AuthController) Logout(c *fiber.Ctx) error {

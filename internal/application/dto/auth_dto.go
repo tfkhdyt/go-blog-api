@@ -12,7 +12,7 @@ type RegisterRequest struct {
 	Password string `json:"password"  valid:"required~password is required,stringlength(8|128)~password length should be between 8 - 128 chars"`
 }
 
-type RegisterResponse struct {
+type RegisterResponseData struct {
 	CreatedAt time.Time `json:"created_at"`
 	FullName  string    `json:"full_name"`
 	Username  string    `json:"username"`
@@ -21,15 +21,25 @@ type RegisterResponse struct {
 	ID        uint      `json:"id"`
 }
 
+type RegisterResponse struct {
+	Message string               `json:"message"`
+	Data    RegisterResponseData `json:"data"`
+}
+
 // Login
 type LoginRequest struct {
 	Email    string `json:"email"    valid:"required~email is required,email~invalid email"`
 	Password string `json:"password" valid:"required~password is required,stringlength(8|128)~password length should be between 8 - 128 chars"`
 }
 
-type LoginResponse struct {
+type LoginResponseData struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+}
+
+type LoginResponse struct {
+	Message string            `json:"message"`
+	Data    LoginResponseData `json:"data"`
 }
 
 // Refresh
@@ -37,8 +47,13 @@ type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token" valid:"required~refresh token is required"`
 }
 
-type RefreshResponse struct {
+type RefreshResponseData struct {
 	AccessToken string `json:"access_token"`
+}
+
+type RefreshResponse struct {
+	Message string              `json:"message"`
+	Data    RefreshResponseData `json:"data"`
 }
 
 // Logout
