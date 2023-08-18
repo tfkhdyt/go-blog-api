@@ -1,5 +1,6 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE TYPE role AS ENUM ('user', 'admin');
-
 CREATE TABLE "user" (
   id SERIAL PRIMARY KEY NOT NULL,
   full_name VARCHAR(50) NOT NULL,
@@ -10,4 +11,10 @@ CREATE TABLE "user" (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- +goose StatementEnd
 
+-- +goose Down
+-- +goose StatementBegin
+DROP TYPE role;
+DROP TABLE "user";
+-- +goose StatementEnd
