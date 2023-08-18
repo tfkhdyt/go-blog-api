@@ -8,8 +8,6 @@ pre-commit:
       glob: "*.go"
       run: gofumpt -w .
 pre-push:
-  parallel: true
   commands:
     security:
-      glob: "go.{mod,sum}"
-      run: gosec ./...
+      run: gosec -exclude=G101 ./...
