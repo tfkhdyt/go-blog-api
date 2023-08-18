@@ -9,7 +9,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
-	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/goioc/di"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/interface/api/route"
@@ -40,7 +39,7 @@ func StartFiberServer() {
 		},
 	})
 
-	app.Use(recover.New())
+	// app.Use(recover.New())
 	app.Use(pprof.New())
 
 	port := flag.Uint("port", 8080, "server port")
