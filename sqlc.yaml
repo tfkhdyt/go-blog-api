@@ -2,7 +2,7 @@ version: "2"
 sql:
   - engine: "postgresql"
     queries: "./internal/infrastructure/database/postgres/query"
-    schema: "./internal/infrastructure/database/postgres/schema"
+    schema: "./internal/infrastructure/database/postgres/migration"
     gen:
       go:
         sql_package: "pgx/v5"

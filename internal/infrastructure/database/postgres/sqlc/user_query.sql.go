@@ -101,7 +101,8 @@ func (q *Queries) FindAdmin(ctx context.Context) ([]User, error) {
 }
 
 const findAllUsers = `-- name: FindAllUsers :many
-SELECT id, full_name, username, email, role, created_at, updated_at FROM "user"
+SELECT id, full_name, username, email, role, created_at, updated_at 
+FROM "user"
 `
 
 type FindAllUsersRow struct {
