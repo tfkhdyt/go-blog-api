@@ -9,3 +9,4 @@ sql:
         out: "./internal/infrastructure/database/postgres/sqlc"
         emit_empty_slices: true
         omit_unused_structs: true
+        emit_interface: true
