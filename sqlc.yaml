@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "./internal/infrastructure/database/postgres/query"
+    schema: "./internal/infrastructure/database/postgres/schema"
+    gen:
+      go:
+        sql_package: "pgx/v5"
+        out: "./internal/infrastructure/database/postgres/sqlc"
+        emit_empty_slices: true
+        omit_unused_structs: true
