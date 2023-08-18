@@ -32,6 +32,16 @@ func (q *Queries) AddResetPasswordToken(ctx context.Context, arg AddResetPasswor
 	return i, err
 }
 
+const deleteResetPasswordToken = `-- name: DeleteResetPasswordToken :exec
+DELETE FROM reset_password_token
+WHERE token = $1
+`
+
+func (q *Queries) DeleteResetPasswordToken(ctx context.Context, token string) error {
+	_, err := q.db.Exec(ctx, deleteResetPasswordToken, token)
+	return err
+}
+
 const findResetPasswordToken = `-- name: FindResetPasswordToken :one
 SELECT token, expires_at, user_id FROM reset_password_token 
 WHERE token = $1
@@ -42,14 +52,4 @@ func (q *Queries) FindResetPasswordToken(ctx context.Context, token string) (Res
 	var i ResetPasswordToken
 	err := row.Scan(&i.Token, &i.ExpiresAt, &i.UserID)
 	return i, err
-}
-
-const removeResetPasswordToken = `-- name: RemoveResetPasswordToken :exec
-DELETE FROM reset_password_token
-WHERE token = $1
-`
-
-func (q *Queries) RemoveResetPasswordToken(ctx context.Context, token string) error {
-	_, err := q.db.Exec(ctx, removeResetPasswordToken, token)
-	return err
 }

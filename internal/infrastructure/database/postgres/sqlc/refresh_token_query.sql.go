@@ -31,6 +31,16 @@ func (q *Queries) AddRefreshToken(ctx context.Context, arg AddRefreshTokenParams
 	return i, err
 }
 
+const deleteRefreshToken = `-- name: DeleteRefreshToken :exec
+DELETE FROM refresh_token
+WHERE token = $1
+`
+
+func (q *Queries) DeleteRefreshToken(ctx context.Context, token string) error {
+	_, err := q.db.Exec(ctx, deleteRefreshToken, token)
+	return err
+}
+
 const findRefreshToken = `-- name: FindRefreshToken :one
 SELECT token, user_id FROM refresh_token 
 WHERE token = $1
@@ -41,14 +51,4 @@ func (q *Queries) FindRefreshToken(ctx context.Context, token string) (RefreshTo
 	var i RefreshToken
 	err := row.Scan(&i.Token, &i.UserID)
 	return i, err
-}
-
-const removeRefreshToken = `-- name: RemoveRefreshToken :exec
-DELETE FROM refresh_token
-WHERE token = $1
-`
-
-func (q *Queries) RemoveRefreshToken(ctx context.Context, token string) error {
-	_, err := q.db.Exec(ctx, removeRefreshToken, token)
-	return err
 }

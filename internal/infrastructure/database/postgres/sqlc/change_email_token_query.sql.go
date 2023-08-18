@@ -43,6 +43,16 @@ func (q *Queries) AddChangeEmailToken(ctx context.Context, arg AddChangeEmailTok
 	return i, err
 }
 
+const deleteChangeEmailToken = `-- name: DeleteChangeEmailToken :exec
+DELETE FROM change_email_token
+WHERE token = $1
+`
+
+func (q *Queries) DeleteChangeEmailToken(ctx context.Context, token string) error {
+	_, err := q.db.Exec(ctx, deleteChangeEmailToken, token)
+	return err
+}
+
 const findChangeEmailToken = `-- name: FindChangeEmailToken :one
 SELECT token, new_email, expires_at, user_id FROM change_email_token 
 WHERE token = $1
@@ -58,14 +68,4 @@ func (q *Queries) FindChangeEmailToken(ctx context.Context, token string) (Chang
 		&i.UserID,
 	)
 	return i, err
-}
-
-const removeChangeEmailToken = `-- name: RemoveChangeEmailToken :exec
-DELETE FROM change_email_token
-WHERE token = $1
-`
-
-func (q *Queries) RemoveChangeEmailToken(ctx context.Context, token string) error {
-	_, err := q.db.Exec(ctx, removeChangeEmailToken, token)
-	return err
 }

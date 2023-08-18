@@ -66,6 +66,40 @@ func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
 	return err
 }
 
+const findAdmin = `-- name: FindAdmin :many
+SELECT id, full_name, username, email, password, role, created_at, updated_at FROM "user"
+WHERE role = 'admin'::role
+`
+
+func (q *Queries) FindAdmin(ctx context.Context) ([]User, error) {
+	rows, err := q.db.Query(ctx, findAdmin)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []User{}
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.FullName,
+			&i.Username,
+			&i.Email,
+			&i.Password,
+			&i.Role,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const findAllUsers = `-- name: FindAllUsers :many
 SELECT id, full_name, username, email, role, created_at, updated_at FROM "user"
 `
@@ -148,6 +182,65 @@ func (q *Queries) FindOneUserByID(ctx context.Context, id int32) (User, error) {
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const updateEmail = `-- name: UpdateEmail :one
+UPDATE "user"
+SET 
+  email = $2,
+  updated_at = $3
+WHERE id = $1
+RETURNING id, full_name, username, email, role, created_at, updated_at
+`
+
+type UpdateEmailParams struct {
+	ID        int32
+	Email     string
+	UpdatedAt pgtype.Timestamp
+}
+
+type UpdateEmailRow struct {
+	ID        int32
+	FullName  string
+	Username  string
+	Email     string
+	Role      NullRole
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+}
+
+func (q *Queries) UpdateEmail(ctx context.Context, arg UpdateEmailParams) (UpdateEmailRow, error) {
+	row := q.db.QueryRow(ctx, updateEmail, arg.ID, arg.Email, arg.UpdatedAt)
+	var i UpdateEmailRow
+	err := row.Scan(
+		&i.ID,
+		&i.FullName,
+		&i.Username,
+		&i.Email,
+		&i.Role,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updatePassword = `-- name: UpdatePassword :exec
+UPDATE "user"
+SET 
+  password = $2,
+  updated_at = $3
+WHERE id = $1
+`
+
+type UpdatePasswordParams struct {
+	ID        int32
+	Password  string
+	UpdatedAt pgtype.Timestamp
+}
+
+func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) error {
+	_, err := q.db.Exec(ctx, updatePassword, arg.ID, arg.Password, arg.UpdatedAt)
+	return err
 }
 
 const updateUser = `-- name: UpdateUser :one
