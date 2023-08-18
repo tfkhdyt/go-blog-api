@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"context"
+
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/repository"
@@ -18,17 +20,22 @@ type AuthUsecase struct {
 func (a *AuthUsecase) Register(
 	payload *dto.RegisterRequest,
 ) (*dto.RegisterResponse, error) {
-	hashedPassword, err := a.passwordHashService.HashPassword(payload.Password)
+	var err error
+	payload.Password, err = a.passwordHashService.HashPassword(payload.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	registeredUser, errRegister := a.userRepo.Register(&entity.User{
-		FullName: payload.FullName,
-		Username: payload.Username,
-		Email:    payload.Email,
-		Password: hashedPassword,
-	})
+	registeredUser, errRegister := a.userRepo.Register(
+		context.Background(),
+		&entity.User{
+			FullName: payload.FullName,
+			Username: payload.Username,
+			Email:    payload.Email,
+			Password: payload.Password,
+			Role:     entity.RoleUser,
+		},
+	)
 	if errRegister != nil {
 		return nil, errRegister
 	}
@@ -51,7 +58,12 @@ func (a *AuthUsecase) Register(
 func (a *AuthUsecase) Login(
 	payload *dto.LoginRequest,
 ) (*dto.LoginResponse, error) {
-	user, err := a.userRepo.FindOneUserByEmail(payload.Email)
+	ctx := context.Background()
+
+	user, err := a.userRepo.FindOneUserByEmail(
+		ctx,
+		payload.Email,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -79,9 +91,14 @@ func (a *AuthUsecase) Login(
 		return nil, errRefreshToken
 	}
 
-	if _, err := a.authRepo.AddToken(&entity.Auth{
-		RefreshToken: refreshToken,
-	}); err != nil {
+	if _, err := a.authRepo.AddToken(
+		ctx,
+		user.ID,
+		&entity.RefreshToken{
+			Token:  refreshToken,
+			UserID: user.ID,
+		},
+	); err != nil {
 		return nil, err
 	}
 
@@ -97,15 +114,20 @@ func (a *AuthUsecase) Login(
 }
 
 func (a *AuthUsecase) Refresh(
-	userId uint,
+	userId int32,
 	payload *dto.RefreshRequest,
 ) (*dto.RefreshResponse, error) {
-	user, err := a.userRepo.FindOneUser(userId)
+	ctx := context.Background()
+
+	user, err := a.userRepo.FindOneUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := a.authRepo.VerifyToken(payload.RefreshToken); err != nil {
+	if err := a.authRepo.VerifyToken(
+		ctx,
+		payload.RefreshToken,
+	); err != nil {
 		return nil, err
 	}
 
@@ -130,7 +152,10 @@ func (a *AuthUsecase) Refresh(
 func (a *AuthUsecase) Logout(
 	refreshToken string,
 ) (*dto.LogoutResponse, error) {
-	if err := a.authRepo.RemoveToken(refreshToken); err != nil {
+	if err := a.authRepo.DeleteToken(
+		context.Background(),
+		refreshToken,
+	); err != nil {
 		return nil, err
 	}
 
@@ -142,10 +167,12 @@ func (a *AuthUsecase) Logout(
 }
 
 func (a *AuthUsecase) ChangePassword(
-	userId uint,
+	userId int32,
 	payload *dto.ChangePasswordRequest,
 ) (*dto.ChangePasswordResponse, error) {
-	user, err := a.userRepo.FindOneUser(userId)
+	ctx := context.Background()
+
+	user, err := a.userRepo.FindOneUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -162,16 +189,19 @@ func (a *AuthUsecase) ChangePassword(
 			NewHTTPError(400, "new and confirm password is not the same")
 	}
 
-	hashedPassword, errHash := a.passwordHashService.HashPassword(
+	var errHash error
+	payload.NewPassword, errHash = a.passwordHashService.HashPassword(
 		payload.NewPassword,
 	)
 	if errHash != nil {
 		return nil, errHash
 	}
 
-	if _, err := a.userRepo.UpdateUser(user, &entity.User{
-		Password: hashedPassword,
-	}); err != nil {
+	if err := a.userRepo.UpdatePassword(
+		ctx,
+		userId,
+		payload.NewPassword,
+	); err != nil {
 		return nil, err
 	}
 
