@@ -8,6 +8,7 @@ import (
 
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/service"
 	"codeberg.org/tfkhdyt/blog-api/pkg/auth"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
@@ -16,6 +17,7 @@ type AuthController struct {
 	authUsecase          *usecase.AuthUsecase          `di.inject:"authUsecase"`
 	resetPasswordUsecase *usecase.ResetPasswordUsecase `di.inject:"resetPasswordUsecase"`
 	changeEmailUsecase   *usecase.ChangeEmailUsecase   `di.inject:"changeEmailUsecase"`
+	authTokenService     service.AuthTokenService      `di.inject:"authTokenService"`
 }
 
 func (a *AuthController) Register(c *fiber.Ctx) error {
@@ -71,8 +73,6 @@ func (a *AuthController) Login(c *fiber.Ctx) error {
 }
 
 func (a *AuthController) Refresh(c *fiber.Ctx) error {
-	userId := auth.GetUserIDFromClaims(c)
-
 	payload := new(dto.RefreshRequest)
 	if err := c.BodyParser(payload); err != nil {
 		rfrsh := c.Cookies("refreshToken")
@@ -83,11 +83,16 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 		payload.RefreshToken = rfrsh
 	}
 
+	claims, err := a.authTokenService.ParseRefreshToken(payload.RefreshToken)
+	if err != nil {
+		return err
+	}
+
 	if _, err := govalidator.ValidateStruct(payload); err != nil {
 		return exception.NewValidationError(err)
 	}
 
-	response, err := a.authUsecase.Refresh(userId, payload)
+	response, err := a.authUsecase.Refresh(claims.UserID, payload)
 	if err != nil {
 		return err
 	}
