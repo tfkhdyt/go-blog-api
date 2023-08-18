@@ -87,7 +87,7 @@ func (a *AuthController) Refresh(c *fiber.Ctx) error {
 		return exception.NewValidationError(err)
 	}
 
-	response, err := a.authUsecase.Refresh(uint(userId), payload)
+	response, err := a.authUsecase.Refresh(userId, payload)
 	if err != nil {
 		return err
 	}

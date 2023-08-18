@@ -29,7 +29,7 @@ func (u *UserController) FindOneUser(c *fiber.Ctx) error {
 		return exception.NewHTTPError(400, "invalid user id")
 	}
 
-	response, errFind := u.userUsecase.FindOneUser(uint(userId))
+	response, errFind := u.userUsecase.FindOneUser(int32(userId))
 	if errFind != nil {
 		return errFind
 	}
@@ -40,7 +40,7 @@ func (u *UserController) FindOneUser(c *fiber.Ctx) error {
 func (u *UserController) FindMyUser(c *fiber.Ctx) error {
 	userId := auth.GetUserIDFromClaims(c)
 
-	response, errFind := u.userUsecase.FindOneUser(uint(userId))
+	response, errFind := u.userUsecase.FindOneUser(userId)
 	if errFind != nil {
 		return errFind
 	}
@@ -63,7 +63,7 @@ func (u *UserController) UpdateUser(c *fiber.Ctx) error {
 		return exception.NewValidationError(err)
 	}
 
-	response, errUpdate := u.userUsecase.UpdateUser(uint(userId), payload)
+	response, errUpdate := u.userUsecase.UpdateUser(int32(userId), payload)
 	if errUpdate != nil {
 		return errUpdate
 	}
@@ -83,7 +83,7 @@ func (u *UserController) UpdateMyUser(c *fiber.Ctx) error {
 		return exception.NewValidationError(err)
 	}
 
-	response, errUpdate := u.userUsecase.UpdateUser(uint(userId), payload)
+	response, errUpdate := u.userUsecase.UpdateUser(userId, payload)
 	if errUpdate != nil {
 		return errUpdate
 	}
@@ -97,7 +97,7 @@ func (u *UserController) DeleteUser(c *fiber.Ctx) error {
 		return exception.NewHTTPError(400, "invalid user id")
 	}
 
-	response, errDelete := u.userUsecase.DeleteUser(uint(userId))
+	response, errDelete := u.userUsecase.DeleteUser(int32(userId))
 	if errDelete != nil {
 		return errDelete
 	}
@@ -108,7 +108,7 @@ func (u *UserController) DeleteUser(c *fiber.Ctx) error {
 func (u *UserController) DeleteMyUser(c *fiber.Ctx) error {
 	userId := auth.GetUserIDFromClaims(c)
 
-	response, errDelete := u.userUsecase.DeleteUser(uint(userId))
+	response, errDelete := u.userUsecase.DeleteUser(userId)
 	if errDelete != nil {
 		return errDelete
 	}

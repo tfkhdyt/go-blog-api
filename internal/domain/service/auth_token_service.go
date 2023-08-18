@@ -1,6 +1,8 @@
 package service
 
+import "codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
+
 type AuthTokenService interface {
-	CreateAccessToken(id uint, role string) (string, error)
-	CreateRefreshToken(id uint, role string) (string, error)
+	CreateAccessToken(id int32, role entity.Role) (string, error)
+	CreateRefreshToken(id int32, role entity.Role) (string, error)
 }

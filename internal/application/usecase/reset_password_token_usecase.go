@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -23,7 +24,9 @@ type ResetPasswordUsecase struct {
 func (r *ResetPasswordUsecase) GetResetPasswordToken(
 	payload *dto.GetResetPasswordTokenRequest,
 ) (*dto.GetResetPasswordTokenResponse, error) {
-	user, err := r.userRepo.FindOneUserByEmail(payload.Email)
+	ctx := context.Background()
+
+	user, err := r.userRepo.FindOneUserByEmail(ctx, payload.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +34,8 @@ func (r *ResetPasswordUsecase) GetResetPasswordToken(
 	token := r.idService.GenerateID()
 
 	if _, errAddToken := r.resetPasswordTokenRepo.AddToken(
-		user,
+		ctx,
+		user.ID,
 		&entity.ResetPasswordToken{
 			Token:     token,
 			ExpiresAt: time.Now().Add(5 * time.Minute),
@@ -66,12 +70,14 @@ func (r *ResetPasswordUsecase) ResetPassword(
 	token string,
 	payload *dto.ResetPasswordRequest,
 ) (*dto.ResetPasswordResponse, error) {
-	tkn, err := r.resetPasswordTokenRepo.FindToken(token)
+	ctx := context.Background()
+
+	tkn, err := r.resetPasswordTokenRepo.FindToken(ctx, token)
 	if err != nil {
 		return nil, err
 	}
 
-	user, errUser := r.userRepo.FindOneUser(tkn.UserID)
+	user, errUser := r.userRepo.FindOneUser(ctx, tkn.UserID)
 	if errUser != nil {
 		return nil, errUser
 	}
@@ -85,19 +91,25 @@ func (r *ResetPasswordUsecase) ResetPassword(
 			NewHTTPError(400, "new and confirm password is not the same")
 	}
 
-	hashedPassword, errHash := r.passwordHashService.
+	var errHash error
+	payload.NewPassword, errHash = r.passwordHashService.
 		HashPassword(payload.NewPassword)
 	if errHash != nil {
 		return nil, errHash
 	}
 
-	if _, err := r.userRepo.UpdateUser(user, &entity.User{
-		Password: hashedPassword,
-	}); err != nil {
+	if err := r.userRepo.UpdatePassword(
+		ctx,
+		user.ID,
+		payload.NewPassword,
+	); err != nil {
 		return nil, err
 	}
 
-	if err := r.resetPasswordTokenRepo.RemoveToken(token); err != nil {
+	if err := r.resetPasswordTokenRepo.DeleteToken(
+		ctx,
+		token,
+	); err != nil {
 		return nil, err
 	}
 

@@ -2,6 +2,8 @@ package dto
 
 import (
 	"time"
+
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 )
 
 // Find all
@@ -13,13 +15,13 @@ type FindAllUsersResponse struct {
 
 // Find one
 type FindOneUserResponseData struct {
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	FullName  string    `json:"full_name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Role      string    `json:"role"`
-	ID        uint      `json:"id"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	FullName  string      `json:"full_name"`
+	Username  string      `json:"username"`
+	Email     string      `json:"email"`
+	Role      entity.Role `json:"role"`
+	ID        int32       `json:"id"`
 }
 
 type FindOneUserResponse struct {
@@ -33,12 +35,12 @@ type UpdateUserRequest struct {
 }
 
 type UpdateUserResponseData struct {
-	UpdatedAt time.Time `json:"updated_at"`
-	FullName  string    `json:"full_name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Role      string    `json:"role"`
-	ID        uint      `json:"id"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	FullName  string      `json:"full_name"`
+	Username  string      `json:"username"`
+	Email     string      `json:"email"`
+	Role      entity.Role `json:"role"`
+	ID        int32       `json:"id"`
 }
 
 type UpdateUserResponse struct {

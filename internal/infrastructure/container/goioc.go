@@ -10,7 +10,7 @@ import (
 
 	"codeberg.org/tfkhdyt/blog-api/config"
 	"codeberg.org/tfkhdyt/blog-api/internal/application/usecase"
-	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/database"
+	postgresDB "codeberg.org/tfkhdyt/blog-api/internal/infrastructure/database/postgres"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/email"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/repository/postgres"
 	"codeberg.org/tfkhdyt/blog-api/internal/infrastructure/security"
@@ -83,7 +83,7 @@ func InitDI() {
 		bean{
 			beanID: "changeEmailRequestRepo",
 			beanType: reflect.TypeOf(
-				(*postgres.ChangeEmailRequestRepositoryPostgres)(nil),
+				(*postgres.ChangeEmailTokenRepositoryPostgres)(nil),
 			),
 		},
 		bean{
@@ -106,9 +106,9 @@ func InitDI() {
 
 	if _, err := di.RegisterBeanInstance(
 		"database",
-		database.PostgresInstance,
+		postgresDB.GetPostgresSQLCQuerier(context.Background()),
 	); err != nil {
-		log.Fatalln("Error:", err.Error())
+		log.Fatalln("ERROR:", err)
 	}
 
 	if _, err := di.RegisterBeanFactory(
@@ -123,10 +123,10 @@ func InitDI() {
 			return client, nil
 		},
 	); err != nil {
-		log.Fatalln("Error:", err.Error())
+		log.Fatalln("ERROR:", err)
 	}
 
 	if err := di.InitializeContainer(); err != nil {
-		log.Fatalln("Error:", err.Error())
+		log.Fatalln("ERROR:", err)
 	}
 }

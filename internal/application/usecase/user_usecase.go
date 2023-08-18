@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
 
 	"codeberg.org/tfkhdyt/blog-api/internal/application/dto"
@@ -13,13 +14,13 @@ type UserUsecase struct {
 }
 
 func (u *UserUsecase) FindAllUsers() (*dto.FindAllUsersResponse, error) {
-	users, err := u.userRepo.FindAllUsers()
+	users, err := u.userRepo.FindAllUsers(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
 	data := dto.FindAllUsersResponseData{}
-	for _, usr := range *users {
+	for _, usr := range users {
 		data = append(data, dto.FindOneUserResponseData{
 			ID:        usr.ID,
 			FullName:  usr.FullName,
@@ -39,9 +40,9 @@ func (u *UserUsecase) FindAllUsers() (*dto.FindAllUsersResponse, error) {
 }
 
 func (u *UserUsecase) FindOneUser(
-	userId uint,
+	userId int32,
 ) (*dto.FindOneUserResponse, error) {
-	usr, err := u.userRepo.FindOneUser(userId)
+	usr, err := u.userRepo.FindOneUser(context.Background(), userId)
 	if err != nil {
 		return nil, err
 	}
@@ -62,18 +63,24 @@ func (u *UserUsecase) FindOneUser(
 }
 
 func (u *UserUsecase) UpdateUser(
-	userId uint,
+	userId int32,
 	payload *dto.UpdateUserRequest,
 ) (*dto.UpdateUserResponse, error) {
-	oldUser, errVerifyUser := u.userRepo.FindOneUser(userId)
-	if errVerifyUser != nil {
+	ctx := context.Background()
+
+	if _, errVerifyUser := u.userRepo.FindOneUser(
+		ctx,
+		userId,
+	); errVerifyUser != nil {
 		return nil, errVerifyUser
 	}
 
-	updatedUser, errUpdate := u.userRepo.UpdateUser(oldUser, &entity.User{
-		FullName: payload.FullName,
-		Username: payload.Username,
-	})
+	updatedUser, errUpdate := u.userRepo.UpdateUser(
+		ctx,
+		userId, &entity.User{
+			FullName: payload.FullName,
+			Username: payload.Username,
+		})
 	if errUpdate != nil {
 		return nil, errUpdate
 	}
@@ -94,13 +101,15 @@ func (u *UserUsecase) UpdateUser(
 }
 
 func (u *UserUsecase) DeleteUser(
-	userId uint,
+	userId int32,
 ) (*dto.DeleteUserResponse, error) {
-	if _, err := u.userRepo.FindOneUser(userId); err != nil {
+	ctx := context.Background()
+
+	if _, err := u.userRepo.FindOneUser(ctx, userId); err != nil {
 		return nil, err
 	}
 
-	if err := u.userRepo.DeleteUser(userId); err != nil {
+	if err := u.userRepo.DeleteUser(ctx, userId); err != nil {
 		return nil, err
 	}
 

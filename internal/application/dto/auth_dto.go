@@ -2,6 +2,8 @@ package dto
 
 import (
 	"time"
+
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 )
 
 // Register
@@ -13,12 +15,12 @@ type RegisterRequest struct {
 }
 
 type RegisterResponseData struct {
-	CreatedAt time.Time `json:"created_at"`
-	FullName  string    `json:"full_name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Role      string    `json:"role"`
-	ID        uint      `json:"id"`
+	CreatedAt time.Time   `json:"created_at"`
+	FullName  string      `json:"full_name"`
+	Username  string      `json:"username"`
+	Email     string      `json:"email"`
+	Role      entity.Role `json:"role"`
+	ID        int32       `json:"id"`
 }
 
 type RegisterResponse struct {

@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -13,18 +14,20 @@ import (
 )
 
 type ChangeEmailUsecase struct {
-	changeEmailRequestRepo repository.ChangeEmailRequestRepository `di.inject:"changeEmailRequestRepo"`
-	userRepo               repository.UserRepository               `di.inject:"userRepo"`
-	idService              service.IDService                       `di.inject:"idService"`
-	emailService           service.EmailService                    `di.inject:"emailService"`
-	passwordHashService    service.PasswordHashService             `di.inject:"passwordHashService"`
+	changeEmailTokenRepo repository.ChangeEmailTokenRepository `di.inject:"changeEmailRequestRepo"`
+	userRepo             repository.UserRepository             `di.inject:"userRepo"`
+	idService            service.IDService                     `di.inject:"idService"`
+	emailService         service.EmailService                  `di.inject:"emailService"`
+	passwordHashService  service.PasswordHashService           `di.inject:"passwordHashService"`
 }
 
 func (r *ChangeEmailUsecase) GetChangeEmailToken(
-	userId uint,
+	userId int32,
 	payload *dto.GetChangeEmailTokenRequest,
 ) (*dto.GetChangeEmailTokenResponse, error) {
-	user, err := r.userRepo.FindOneUser(userId)
+	ctx := context.Background()
+
+	user, err := r.userRepo.FindOneUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -36,15 +39,19 @@ func (r *ChangeEmailUsecase) GetChangeEmailToken(
 		return nil, err
 	}
 
-	if _, err := r.userRepo.FindOneUserByEmail(payload.NewEmail); err == nil {
+	if _, err := r.userRepo.FindOneUserByEmail(
+		ctx,
+		payload.NewEmail,
+	); err == nil {
 		return nil, exception.
 			NewHTTPError(400, "this email has been used by other user")
 	}
 
 	token := r.idService.GenerateID()
 
-	if _, errAddToken := r.changeEmailRequestRepo.AddRequest(
-		user,
+	if _, errAddToken := r.changeEmailTokenRepo.AddToken(
+		ctx,
+		userId,
 		&entity.ChangeEmailRequest{
 			NewEmail:  payload.NewEmail,
 			Token:     token,
@@ -79,12 +86,14 @@ func (r *ChangeEmailUsecase) GetChangeEmailToken(
 func (r *ChangeEmailUsecase) ChangeEmail(
 	token string,
 ) (*dto.ChangeEmailResponse, error) {
-	request, err := r.changeEmailRequestRepo.FindRequestByToken(token)
+	ctx := context.Background()
+
+	request, err := r.changeEmailTokenRepo.FindToken(ctx, token)
 	if err != nil {
 		return nil, err
 	}
 
-	user, errUser := r.userRepo.FindOneUser(request.UserID)
+	user, errUser := r.userRepo.FindOneUser(ctx, request.UserID)
 	if errUser != nil {
 		return nil, errUser
 	}
@@ -93,13 +102,18 @@ func (r *ChangeEmailUsecase) ChangeEmail(
 		return nil, exception.NewHTTPError(400, "token is expired")
 	}
 
-	if _, err := r.userRepo.UpdateUser(user, &entity.User{
-		Email: request.NewEmail,
-	}); err != nil {
+	if _, err := r.userRepo.UpdateEmail(
+		ctx,
+		user.ID,
+		request.NewEmail,
+	); err != nil {
 		return nil, err
 	}
 
-	if err := r.changeEmailRequestRepo.RemoveRequestByToken(token); err != nil {
+	if err := r.changeEmailTokenRepo.DeleteToken(
+		ctx,
+		token,
+	); err != nil {
 		return nil, err
 	}
 

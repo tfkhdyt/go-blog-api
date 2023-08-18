@@ -17,6 +17,18 @@ dev: db-start
 dev-watch: db-start
 	watchexec -c -r -e go -- go run ./cmd/blog-api $(ARGS)
 
+sqlc-generate:
+	sqlc generate
+
+migrate-up:
+	goose -dir "./internal/infrastructure/database/postgres/schema/" up
+
+migrate-down:
+	goose -dir "./internal/infrastructure/database/postgres/schema/" down
+
+migrate-status:
+	goose -dir "./internal/infrastructure/database/postgres/schema/" status
+
 test:
 	go test -v ./...
 
