@@ -14,10 +14,10 @@ type AuthRoute struct {
 func (a *AuthRoute) RegisterRoute(router fiber.Router) {
 	router.Post("/register", a.authController.Register)
 	router.Post("/login", a.authController.Login)
+	router.Patch("/refresh", a.authController.Refresh)
 	router.Post("/password/reset", a.authController.GetResetPasswordToken)
 	router.Patch("/password/reset/:token", a.authController.ResetPassword)
 
-	router.Patch("/refresh", middleware.JwtMiddleware, a.authController.Refresh)
 	router.Delete("/logout", middleware.JwtMiddleware, a.authController.Logout)
 	router.Patch(
 		"/password/change",
