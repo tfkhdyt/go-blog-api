@@ -6,12 +6,13 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 
 	"codeberg.org/tfkhdyt/blog-api/config"
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
 type JwtService struct{}
 
-func (j *JwtService) CreateAccessToken(id uint, role string) (string, error) {
+func (j *JwtService) CreateAccessToken(id int32, role entity.Role) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"iss":    "blog-api",
 		"userId": id,
@@ -31,7 +32,10 @@ func (j *JwtService) CreateAccessToken(id uint, role string) (string, error) {
 	return signedString, nil
 }
 
-func (j *JwtService) CreateRefreshToken(id uint, role string) (string, error) {
+func (j *JwtService) CreateRefreshToken(
+	id int32,
+	role entity.Role,
+) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"iss":    "blog-api",
 		"userId": id,
