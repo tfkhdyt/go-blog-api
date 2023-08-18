@@ -15,6 +15,6 @@ CREATE TABLE "user" (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TYPE role;
 DROP TABLE "user";
+DROP TYPE role;
 -- +goose StatementEnd
