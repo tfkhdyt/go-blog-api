@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"codeberg.org/tfkhdyt/blog-api/config"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
@@ -53,7 +53,7 @@ func seedAdmin(ctx context.Context, db sqlc.Querier) {
 }
 
 func GetPostgresSQLCQuerier(ctx context.Context) *sqlc.Queries {
-	conn, err := pgx.Connect(ctx, config.PostgresURL)
+	conn, err := pgxpool.New(ctx, config.PostgresURL)
 	if err != nil {
 		log.Fatalln("ERROR:", err.Error())
 	}
