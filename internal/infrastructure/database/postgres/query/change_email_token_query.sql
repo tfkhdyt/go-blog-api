@@ -9,6 +9,6 @@ INSERT INTO change_email_token (
 SELECT * FROM change_email_token 
 WHERE token = $1;
 
--- name: RemoveChangeEmailToken :exec
+-- name: DeleteChangeEmailToken :exec
 DELETE FROM change_email_token
 WHERE token = $1;

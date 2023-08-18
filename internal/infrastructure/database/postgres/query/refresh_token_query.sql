@@ -9,6 +9,6 @@ INSERT INTO refresh_token (
 SELECT * FROM refresh_token 
 WHERE token = $1;
 
--- name: RemoveRefreshToken :exec
+-- name: DeleteRefreshToken :exec
 DELETE FROM refresh_token
 WHERE token = $1;

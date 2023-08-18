@@ -9,6 +9,6 @@ INSERT INTO reset_password_token (
 SELECT * FROM reset_password_token 
 WHERE token = $1;
 
--- name: RemoveResetPasswordToken :exec
+-- name: DeleteResetPasswordToken :exec
 DELETE FROM reset_password_token
 WHERE token = $1;
