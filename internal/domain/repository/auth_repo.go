@@ -1,9 +1,17 @@
 package repository
 
-import "codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
+import (
+	"context"
+
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
+)
 
 type AuthRepository interface {
-	AddToken(auth *entity.Auth) (*entity.Auth, error)
-	VerifyToken(token string) error
-	RemoveToken(token string) error
+	AddToken(
+		ctx context.Context,
+		userId int32,
+		refreshToken *entity.RefreshToken,
+	) (*entity.RefreshToken, error)
+	VerifyToken(ctx context.Context, token string) error
+	DeleteToken(ctx context.Context, token string) error
 }
