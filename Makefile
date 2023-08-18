@@ -20,14 +20,17 @@ dev-watch: db-start
 sqlc-generate:
 	sqlc generate
 
-migrate-up:
-	goose -dir "./internal/infrastructure/database/postgres/schema/" up
+migrate-up: db-start
+	goose -dir "./internal/infrastructure/database/postgres/migration" up
 
-migrate-down:
-	goose -dir "./internal/infrastructure/database/postgres/schema/" down
+migrate-down: db-start
+	goose -dir "./internal/infrastructure/database/postgres/migration" down
 
-migrate-status:
-	goose -dir "./internal/infrastructure/database/postgres/schema/" status
+migrate-status: db-start
+	goose -dir "./internal/infrastructure/database/postgres/migration" status
+
+migrate-create: db-start
+	goose -dir "./internal/infrastructure/database/postgres/migration" create $(NAME) sql
 
 test:
 	go test -v ./...
