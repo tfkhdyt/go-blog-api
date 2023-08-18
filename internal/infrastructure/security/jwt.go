@@ -1,12 +1,14 @@
 package security
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 
 	"codeberg.org/tfkhdyt/blog-api/config"
 	"codeberg.org/tfkhdyt/blog-api/internal/domain/entity"
+	"codeberg.org/tfkhdyt/blog-api/internal/domain/service"
 	"codeberg.org/tfkhdyt/blog-api/pkg/exception"
 )
 
@@ -53,4 +55,45 @@ func (j *JwtService) CreateRefreshToken(
 	}
 
 	return signedString, nil
+}
+
+func (j *JwtService) ParseRefreshToken(tokenString string) (*service.Claims, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
+		// Don't forget to validate the alg is what you expect:
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, exception.NewHTTPError(
+				400,
+				fmt.Sprintf(
+					"unexpected signing method: %v",
+					token.Header["alg"],
+				),
+			)
+		}
+
+		return []byte(config.JwtRefreshTokenKey), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return nil, exception.NewHTTPError(400, "invalid token")
+	}
+
+	userId, okUserId := claims["userId"].(float64)
+	if !okUserId {
+		return nil, exception.
+			NewHTTPError(400, "failed to parse user id from claims")
+	}
+
+	role, okRole := claims["role"].(string)
+	if !okRole {
+		return nil, exception.NewHTTPError(400, "failed to parse role from claims")
+	}
+
+	return &service.Claims{
+		UserID: int32(userId),
+		Role:   entity.Role(role),
+	}, nil
 }
