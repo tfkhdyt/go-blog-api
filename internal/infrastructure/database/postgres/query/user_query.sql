@@ -16,6 +16,10 @@ WHERE id = $1 LIMIT 1;
 SELECT * FROM "user" 
 WHERE email = $1 LIMIT 1;
 
+-- name: FindAdmin :many
+SELECT * FROM "user"
+WHERE role = 'admin'::role;
+
 -- name: UpdateUser :one
 UPDATE "user"
 SET 
@@ -24,6 +28,21 @@ SET
   updated_at = $4
 WHERE id = $1
 RETURNING id, full_name, username, email, role, created_at, updated_at;
+
+-- name: UpdateEmail :one
+UPDATE "user"
+SET 
+  email = $2,
+  updated_at = $3
+WHERE id = $1
+RETURNING id, full_name, username, email, role, created_at, updated_at;
+
+-- name: UpdatePassword :exec
+UPDATE "user"
+SET 
+  password = $2,
+  updated_at = $3
+WHERE id = $1;
 
 -- name: DeleteUser :exec
 DELETE FROM "user"
