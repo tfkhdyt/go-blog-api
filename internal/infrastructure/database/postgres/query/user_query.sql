@@ -6,7 +6,8 @@ INSERT INTO "user" (
 ) RETURNING id, full_name, username, email, role, created_at;
 
 -- name: FindAllUsers :many
-SELECT id, full_name, username, email, role, created_at, updated_at FROM "user";
+SELECT id, full_name, username, email, role, created_at, updated_at 
+FROM "user";
 
 -- name: FindOneUserByID :one
 SELECT * FROM "user" 
