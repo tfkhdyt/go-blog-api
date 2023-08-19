@@ -1,4 +1,4 @@
--- +goose Up
+-- migrate:up
 CREATE TABLE refresh_token (
   token TEXT PRIMARY KEY NOT NULL,
   user_id INTEGER,
@@ -7,5 +7,5 @@ CREATE TABLE refresh_token (
     ON DELETE CASCADE
 );
 
--- +goose Down
+-- migrate:down
 DROP TABLE refresh_token;

@@ -1,4 +1,4 @@
--- +goose Up
+-- migrate:up
 CREATE TABLE change_email_token (
   token TEXT PRIMARY KEY NOT NULL,
   new_email VARCHAR(255) NOT NULL,
@@ -9,5 +9,5 @@ CREATE TABLE change_email_token (
     ON DELETE CASCADE
 );
 
--- +goose Down
+-- migrate:down
 DROP TABLE change_email_token;

@@ -1,4 +1,4 @@
--- +goose Up
+-- migrate:up
 CREATE TABLE reset_password_token (
   token TEXT PRIMARY KEY NOT NULL,
   expires_at TIMESTAMP NOT NULL,
@@ -8,5 +8,5 @@ CREATE TABLE reset_password_token (
     ON DELETE CASCADE
 );
 
--- +goose Down
+-- migrate:down
 DROP TABLE reset_password_token;
