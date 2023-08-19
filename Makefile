@@ -20,18 +20,6 @@ dev-watch: db-start
 sqlc-generate:
 	sqlc generate
 
-migrate-up: db-start
-	goose -dir "./internal/infrastructure/database/postgres/migration" up
-
-migrate-down: db-start
-	goose -dir "./internal/infrastructure/database/postgres/migration" down
-
-migrate-status: db-start
-	goose -dir "./internal/infrastructure/database/postgres/migration" status
-
-migrate-create: db-start
-	goose -dir "./internal/infrastructure/database/postgres/migration" create $(NAME) sql
-
 test:
 	go test -v ./...
 
@@ -60,4 +48,4 @@ db-stop:
 db-status:
 	systemctl status postgresql
 
-.PHONY: build install start dev dev-watch test test-cover test-cover-watch test-cover-html generate clean db-start db-stop db-status
+.PHONY: build install start dev dev-watch sqlc-generate test test-cover test-cover-watch test-cover-html generate clean db-start db-stop db-status

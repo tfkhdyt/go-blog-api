@@ -1,5 +1,4 @@
--- +goose Up
--- +goose StatementBegin
+-- migrate:up
 CREATE TYPE role AS ENUM ('user', 'admin');
 CREATE TABLE "user" (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -11,10 +10,7 @@ CREATE TABLE "user" (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- +goose StatementEnd
 
--- +goose Down
--- +goose StatementBegin
+-- migrate:down
 DROP TABLE "user";
 DROP TYPE role;
--- +goose StatementEnd
