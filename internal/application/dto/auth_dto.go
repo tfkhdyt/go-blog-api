@@ -15,12 +15,12 @@ type RegisterRequest struct {
 }
 
 type RegisterResponseData struct {
-	CreatedAt time.Time   `json:"created_at"`
+	ID        int32       `json:"id"`
 	FullName  string      `json:"full_name"`
 	Username  string      `json:"username"`
 	Email     string      `json:"email"`
 	Role      entity.Role `json:"role"`
-	ID        int32       `json:"id"`
+	CreatedAt time.Time   `json:"created_at"`
 }
 
 type RegisterResponse struct {

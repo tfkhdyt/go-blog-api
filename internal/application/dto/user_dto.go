@@ -15,13 +15,13 @@ type FindAllUsersResponse struct {
 
 // Find one
 type FindOneUserResponseData struct {
-	CreatedAt time.Time   `json:"created_at"`
-	UpdatedAt time.Time   `json:"updated_at"`
+	ID        int32       `json:"id"`
 	FullName  string      `json:"full_name"`
 	Username  string      `json:"username"`
 	Email     string      `json:"email"`
 	Role      entity.Role `json:"role"`
-	ID        int32       `json:"id"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdatedAt time.Time   `json:"updated_at"`
 }
 
 type FindOneUserResponse struct {
@@ -35,12 +35,12 @@ type UpdateUserRequest struct {
 }
 
 type UpdateUserResponseData struct {
-	UpdatedAt time.Time   `json:"updated_at"`
+	ID        int32       `json:"id"`
 	FullName  string      `json:"full_name"`
 	Username  string      `json:"username"`
 	Email     string      `json:"email"`
 	Role      entity.Role `json:"role"`
-	ID        int32       `json:"id"`
+	UpdatedAt time.Time   `json:"updated_at"`
 }
 
 type UpdateUserResponse struct {
