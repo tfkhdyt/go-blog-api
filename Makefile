@@ -1,7 +1,7 @@
 all: start
 
 build:
-	go build -o ./bin/blog-api ./cmd/blog-api
+	GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o ./bin/blog-api ./cmd/blog-api
 
 install:
 	go install ./cmd/blog-api
